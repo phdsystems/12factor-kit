@@ -25,6 +25,10 @@ COVERAGE_DIR="$PROJECT_ROOT/coverage"
 TEST_SCRIPTS=(
     "tests/test-core-assessment.sh"
     "tests/test-input-validation.sh"
+    "tests/test-help-and-verbose.sh"
+    "tests/test-output-formats.sh"
+    "tests/test-strict-mode.sh"
+    "tests/test-assessment-paths.sh"
 )
 
 # Cleanup previous coverage
