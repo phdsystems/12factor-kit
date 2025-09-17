@@ -31,6 +31,12 @@ echo -e "\n${BOLD}Running Validation Tests...${NC}"
 echo -e "\n${BOLD}Running Quick Validation Tests...${NC}"
 "$SCRIPT_DIR/test-quick-validation.sh"
 
+echo -e "\n${BOLD}Running Utility Functions Tests...${NC}"
+"$SCRIPT_DIR/test-utils-library.sh"
+
+echo -e "\n${BOLD}Running Coverage Improvement Tests...${NC}"
+"$SCRIPT_DIR/test-coverage-improvements.sh"
+
 echo -e "\n${BOLD}${CYAN}Running Coverage Analysis...${NC}"
 
 # Run coverage on all test files
