@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# ==============================================================================
+# 12-Factor Assessment Tool - CLI Wrapper
+# ==============================================================================
+# This is the main entry point that calls the actual implementation in src/
+# ==============================================================================
+
+set -euo pipefail
+
+# Determine the script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="${SCRIPT_DIR}/../src"
+
+# Check if main script exists
+if [[ ! -f "${SRC_DIR}/12factor-assess.sh" ]]; then
+    echo "Error: Main script not found at ${SRC_DIR}/12factor-assess.sh" >&2
+    exit 1
+fi
+
+# Execute the main script with all arguments
+exec "${SRC_DIR}/12factor-assess.sh" "$@"

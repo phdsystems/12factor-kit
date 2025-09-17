@@ -1,0 +1,35 @@
+# Test artifacts
+test-output/
+test-*.log
+*.tmp
+
+# Reports
+assessment-report.md
+compliance.json
+report.json
+report.md
+*.html
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Docker
+.dockerignore
+
+# Node modules (if npm is used)
+node_modules/
+
+# Python cache (if Python scripts are added)
+__pycache__/
+*.pyc
+
+# Backup files
+*.bak
+*.backup

@@ -1,0 +1,64 @@
+{
+  "name": "12-factor-reviewer",
+  "version": "1.0.0",
+  "description": "Comprehensive language-agnostic 12-Factor App compliance review and assessment tool",
+  "main": "bin/12factor-assess",
+  "scripts": {
+    "test": "./tests/test_12factor_assessment.sh",
+    "install": "./install.sh --local",
+    "uninstall": "./install.sh --uninstall --local",
+    "assess": "./bin/12factor-assess",
+    "assess:json": "./bin/12factor-assess . -f json",
+    "assess:markdown": "./bin/12factor-assess . -f markdown",
+    "docker:build": "docker build -t 12factor-reviewer .",
+    "docker:run": "docker run -v $(pwd):/project 12factor-reviewer"
+  },
+  "keywords": [
+    "12-factor",
+    "twelve-factor",
+    "compliance",
+    "assessment",
+    "reviewer",
+    "cloud-native",
+    "devops",
+    "best-practices",
+    "code-quality",
+    "audit",
+    "analysis"
+  ],
+  "author": "PHD Systems",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phdsystems/12-factor-reviewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phdsystems/12-factor-reviewer/issues"
+  },
+  "homepage": "https://github.com/phdsystems/12-factor-reviewer",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "bin": {
+    "12factor-assess": "./bin/12factor-assess",
+    "12factor-reviewer": "./bin/12factor-assess"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "lib/",
+    "docs/",
+    "examples/",
+    "tests/",
+    "config/",
+    "README.md",
+    "LICENSE",
+    "install.sh",
+    "Dockerfile",
+    "Makefile"
+  ]
+}
