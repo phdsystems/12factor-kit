@@ -32,7 +32,13 @@ TEST_SCRIPTS=(
     "tests/test-terminal-output.sh"
     "tests/test-remediation.sh"
     "tests/test-edge-cases.sh"
-    "tests/test-coverage-gaps.sh"
+    "tests/test-verbose-and-flags.sh"
+    "tests/test-language-detection.sh"
+    "tests/test-all-languages-formats.sh"
+    "tests/test-remediation-all-factors.sh"
+    "tests/test-verbose-edge-cases.sh"
+    "tests/test-maximum-project-scenarios.sh"
+    "tests/test-exhaustive-combinations.sh"
 )
 
 # Cleanup previous coverage

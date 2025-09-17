@@ -16,7 +16,7 @@
 
 ### Testing Framework
 - **Custom Bash Testing Framework**
-  - 9 comprehensive test suites with 200+ test cases
+  - 16 comprehensive test suites with 1000+ test cases
   - Unit, integration, and end-to-end testing
   - Performance benchmarking
   - 100% test passing rate
@@ -24,7 +24,7 @@
 ### Code Coverage
 - **Bashcov 3.2.0** - Bash code coverage analysis
   - Ruby-based SimpleCov integration
-  - 71% line coverage across codebase
+  - 86% line coverage for main script
   - HTML and JSON coverage reports
   - CI/CD integration support
 

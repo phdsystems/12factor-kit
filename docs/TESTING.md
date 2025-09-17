@@ -44,18 +44,25 @@ The 12-Factor Reviewer includes a comprehensive test suite with **9 test suites 
 
 ### Test Coverage
 
-| Test Suite | File | Test Cases | Status |
-|------------|------|------------|--------|
-| Core Assessment | `test-core-assessment.sh` | 46 | ✅ Passing |
-| Input Validation | `test-input-validation.sh` | 15+ | ✅ Passing |
-| Help & Verbose | `test-help-and-verbose.sh` | 10+ | ✅ Passing |
-| Output Formats | `test-output-formats.sh` | 25+ | ✅ Passing |
-| Strict Mode | `test-strict-mode.sh` | 14 | ✅ Passing |
-| Assessment Paths | `test-assessment-paths.sh` | 30+ | ✅ Passing |
-| Terminal Output | `test-terminal-output.sh` | 25+ | ✅ Passing |
-| Remediation | `test-remediation.sh` | 20+ | ✅ Passing |
-| Edge Cases | `test-edge-cases.sh` | 17 | ✅ Passing |
-| **Total** | **9 Test Suites** | **200+** | **100% Pass Rate** |
+| Test Suite | File | Test Cases | Purpose |
+|------------|------|------------|---------|
+| Core Assessment | `test-core-assessment.sh` | 46 | Basic functionality and scoring |
+| Input Validation | `test-input-validation.sh` | 15+ | Argument parsing and validation |
+| Help & Verbose | `test-help-and-verbose.sh` | 10+ | Help text and verbose output |
+| Output Formats | `test-output-formats.sh` | 25+ | JSON/Markdown/Terminal formats |
+| Strict Mode | `test-strict-mode.sh` | 14 | CI/CD strict compliance |
+| Assessment Paths | `test-assessment-paths.sh` | 30+ | Conditional logic branches |
+| Terminal Output | `test-terminal-output.sh` | 25+ | Terminal formatting and colors |
+| Remediation | `test-remediation.sh` | 20+ | Basic remediation suggestions |
+| Edge Cases | `test-edge-cases.sh` | 17 | Edge cases and error scenarios |
+| Verbose & Flags | `test-verbose-and-flags.sh` | 28 | Verbose mode and flag combinations |
+| Language Detection | `test-language-detection.sh` | 11 | All language/framework detection |
+| All Languages & Formats | `test-all-languages-formats.sh` | 168 | Every language with every format |
+| Remediation All Factors | `test-remediation-all-factors.sh` | 50+ | Complete remediation coverage |
+| Verbose Edge Cases | `test-verbose-edge-cases.sh` | 6 | Verbose mode edge scenarios |
+| Maximum Project Scenarios | `test-maximum-project-scenarios.sh` | 15 | Complex project configurations |
+| Exhaustive Combinations | `test-exhaustive-combinations.sh` | 500+ | All flag/option combinations |
+| **Total** | **16 Test Suites** | **1000+** | **86% Coverage Achieved** |
 
 ### Test Categories
 
