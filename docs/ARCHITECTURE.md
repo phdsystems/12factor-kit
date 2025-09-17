@@ -29,9 +29,7 @@ The 12-Factor Assessment Tool is designed as a modular, extensible system for ev
 ├── config/               # Configuration files
 ├── scripts/                     # Helper scripts
 │   ├── batch-assessment.sh      # Batch processing
-│   ├── coverage-analysis.sh     # Coverage analysis (kcov)
-│   ├── coverage-analysis-bashcov.sh  # Coverage analysis (bashcov)
-│   ├── coverage-analysis-simple.sh   # Simple coverage analysis
+│   ├── coverage-analysis.sh     # Code coverage analysis (bashcov)
 │   ├── coverage-summary.sh      # Coverage report display
 │   └── test-runner.sh           # Test execution
 ├── examples/             # Usage examples

@@ -35,9 +35,7 @@ echo -e "\n${BOLD}${CYAN}Running Coverage Analysis...${NC}"
 
 # Run coverage on all test files
 cd "$PROJECT_ROOT"
-timeout 90 bashcov --root . \
-  tests/test-core-assessment.sh \
-  tests/test-input-validation.sh 2>&1 | tail -10
+timeout 90 ./scripts/coverage-analysis.sh 2>&1 | tail -10
 
 echo
 echo -e "${BOLD}Coverage Summary:${NC}"

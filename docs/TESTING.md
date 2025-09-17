@@ -92,16 +92,12 @@ The 12-Factor Reviewer includes a comprehensive test suite with **46+ unit tests
 
 **Coverage Status**: Full code coverage analysis implemented using bashcov (Ruby-based).
 
-#### Coverage Tools:
-1. **bashcov**: Ruby gem for bash code coverage
-   - Status: ✅ **Installed and working**
-   - Version: 3.2.0
-   - Backend: SimpleCov 0.22.0
-   - Script: `scripts/coverage-bashcov.sh`
-
-2. **Alternative approaches available**:
-   - kcov: Has compatibility issues with our scripts
-   - Trace-based: `scripts/coverage-simple.sh` for approximation
+#### Coverage Tool:
+**bashcov**: Ruby gem for bash code coverage
+- Status: ✅ **Installed and working**
+- Version: 3.2.0
+- Backend: SimpleCov 0.22.0
+- Script: `scripts/coverage-analysis.sh`
 
 #### Coverage Results:
 - **Overall Line Coverage**: **62.24%** (722/1160 lines)*
@@ -113,14 +109,14 @@ The 12-Factor Reviewer includes a comprehensive test suite with **46+ unit tests
 
 #### Running Coverage:
 ```bash
-# Generate coverage report
-bashcov --root . tests/test-core-assessment.sh
-
-# Or use our wrapper script
-./scripts/coverage-analysis-bashcov.sh
+# Generate coverage report with multiple test suites
+./scripts/coverage-analysis.sh
 
 # View coverage summary
 ./scripts/coverage-summary.sh
+
+# Or run bashcov directly on individual tests
+bashcov --root . tests/test-core-assessment.sh
 ```
 
 The HTML report is generated at `coverage/index.html` with detailed line-by-line coverage.
