@@ -11,7 +11,7 @@ set -uo pipefail  # Remove -e to handle exit codes properly
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -54,7 +54,7 @@ create_high_compliance_project() {
     echo '{"name": "compliant-project", "version": "1.0.0", "scripts": {"start": "node server.js"}}' > "$project_dir/package.json"
     echo '{"name": "compliant-project", "lockfileVersion": 1}' > "$project_dir/package-lock.json"
     echo "PORT=\${PORT:-3000}" > "$project_dir/.env"
-    echo "# .env.example\nPORT=3000\nDATABASE_URL=postgres://user:pass@host:5432/db" > "$project_dir/.env.example"
+    printf "# .env.example\nPORT=3000\nDATABASE_URL=postgres://user:pass@host:5432/db" > "$project_dir/.env.example"
 
     # Multi-stage Dockerfile
     cat > "$project_dir/Dockerfile" << 'EOF'
@@ -101,14 +101,14 @@ EOF
     echo '{"apps": [{"name": "app", "script": "server.js", "instances": "max"}]}' > "$project_dir/ecosystem.config.js"
 
     # Initialize git
-    cd "$project_dir"
+    cd "$project_dir" || return
     git init -q
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
     git commit -q -m "Initial commit"
     git remote add origin https://github.com/example/repo.git
-    cd - >/dev/null
+    cd - >/dev/null || return
 }
 
 create_low_compliance_project() {
@@ -119,13 +119,13 @@ create_low_compliance_project() {
     echo '{"name": "minimal-project"}' > "$project_dir/package.json"
     echo "SECRET_KEY=hardcoded_secret_123" > "$project_dir/config.py"
 
-    cd "$project_dir"
+    cd "$project_dir" || return
     git init -q
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
     git commit -q -m "Initial commit"
-    cd - >/dev/null
+    cd - >/dev/null || return
 }
 
 test_strict_mode_success() {
@@ -201,22 +201,23 @@ test_compliance_threshold_boundary() {
     # Create a project that might be near the 80% threshold
     echo '{"name": "boundary-test", "version": "1.0.0"}' > "$boundary_project/package.json"
     echo "PORT=3000" > "$boundary_project/.env"
-    echo "FROM node:18\nEXPOSE 3000" > "$boundary_project/Dockerfile"
+    printf "FROM node:18\nEXPOSE 3000" > "$boundary_project/Dockerfile"
 
-    cd "$boundary_project"
+    cd "$boundary_project" || return
     git init -q
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
     git commit -q -m "Initial commit"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
     # Test near threshold (this will help cover the percentage calculation paths)
     timeout 15 "$TOOL_PATH" "$boundary_project" --strict >/dev/null 2>&1 || true
     pass_test "Strict mode handles boundary compliance cases"
 
     # Test the score calculation is working
-    local score_output=$("$TOOL_PATH" "$boundary_project" -f json 2>/dev/null | grep '"percentage"' | head -1 || echo "")
+    local score_output
+    score_output=$("$TOOL_PATH" "$boundary_project" -f json 2>/dev/null | grep '"percentage"' | head -1 || echo "")
     if [[ -n "$score_output" ]]; then
         pass_test "Score calculation working for strict mode evaluation"
     else

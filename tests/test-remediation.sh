@@ -11,7 +11,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m' # Unused color variable
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -61,7 +61,8 @@ test_remediation_for_missing_codebase() {
     mkdir -p "$no_git_project"
     echo '{"name": "test"}' > "$no_git_project/package.json"
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_git_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_git_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "git init\|initialize.*git\|version control"; then
         pass_test "Suggests Git initialization"
@@ -85,7 +86,8 @@ test_remediation_for_missing_dependencies() {
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_lock_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_lock_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "npm install\|yarn install\|lock file"; then
         pass_test "Suggests lock file generation"
@@ -115,7 +117,8 @@ EOF
     timeout 5 git commit -q -m "Initial"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$hardcoded_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$hardcoded_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "environment.*variable\|\.env\|config.*environment"; then
         pass_test "Suggests using environment variables"
@@ -153,7 +156,8 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_services_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_services_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "DATABASE_URL\|connection.*string\|service.*url"; then
         pass_test "Suggests using connection URLs"
@@ -183,7 +187,8 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_build_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_build_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "multi-stage\|builder\|FROM.*AS"; then
         pass_test "Suggests multi-stage Docker builds"
@@ -219,7 +224,8 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$stateful_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$stateful_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "redis\|memcached\|external.*session\|stateless"; then
         pass_test "Suggests external session storage"
@@ -247,7 +253,8 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_port_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_port_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "process\.env\.PORT\|PORT.*environment"; then
         pass_test "Suggests using PORT environment variable"
@@ -271,7 +278,8 @@ test_remediation_for_missing_concurrency() {
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_concurrency_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_concurrency_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "kubernetes\|docker.*compose\|scaling\|replicas\|worker"; then
         pass_test "Suggests scaling mechanisms"
@@ -299,7 +307,8 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_disposability_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_disposability_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "SIGTERM\|SIGINT\|graceful.*shutdown\|signal.*handler"; then
         pass_test "Suggests signal handling"
@@ -333,7 +342,8 @@ test_remediation_for_dev_prod_parity() {
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_parity_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_parity_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "docker\|container\|environment.*variable"; then
         pass_test "Suggests containerization"
@@ -360,7 +370,8 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_logs_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_logs_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "stdout\|stderr\|console\|stream"; then
         pass_test "Suggests stream-based logging"
@@ -383,7 +394,8 @@ test_remediation_for_missing_admin_processes() {
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_admin_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_admin_project" --remediate 2>&1)
 
     if echo "$output" | grep -q -i "migration\|script\|tasks\|npm.*scripts\|make"; then
         pass_test "Suggests admin task setup"
@@ -406,7 +418,8 @@ test_remediation_output_formats() {
     cd - >/dev/null
 
     # Test terminal format with remediation
-    local terminal_output=$(timeout 10 "$TOOL_PATH" "$test_project" --remediate -f terminal 2>&1)
+    local terminal_output
+    terminal_output=$(timeout 10 "$TOOL_PATH" "$test_project" --remediate -f terminal 2>&1)
     if [[ -n "$terminal_output" ]]; then
         pass_test "Remediation works with terminal format"
     else
@@ -414,7 +427,8 @@ test_remediation_output_formats() {
     fi
 
     # Test JSON format with remediation
-    local json_output=$(timeout 10 "$TOOL_PATH" "$test_project" --remediate -f json 2>&1)
+    local json_output
+    json_output=$(timeout 10 "$TOOL_PATH" "$test_project" --remediate -f json 2>&1)
     if echo "$json_output" | python3 -m json.tool >/dev/null 2>&1; then
         pass_test "Remediation works with JSON format"
     else
@@ -422,7 +436,8 @@ test_remediation_output_formats() {
     fi
 
     # Test Markdown format with remediation
-    local md_output=$(timeout 10 "$TOOL_PATH" "$test_project" --remediate -f markdown 2>&1)
+    local md_output
+    md_output=$(timeout 10 "$TOOL_PATH" "$test_project" --remediate -f markdown 2>&1)
     if echo "$md_output" | grep -q "#\|##\|\*\|-"; then
         pass_test "Remediation works with Markdown format"
     else
@@ -443,10 +458,12 @@ test_comprehensive_remediation() {
     echo "app.listen(3000)" > "$complex_project/server.js"       # Hardcoded port
 
     # No Git
-    local output=$(timeout 10 "$TOOL_PATH" "$complex_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$complex_project" --remediate 2>&1)
 
     # Count number of remediation suggestions
-    local suggestion_count=$(echo "$output" | grep -c "TODO\|FIXME\|Add\|Create\|Configure\|Implement\|Use\|Consider" || echo "0")
+    local suggestion_count
+    suggestion_count=$(echo "$output" | grep -c "TODO\|FIXME\|Add\|Create\|Configure\|Implement\|Use\|Consider" || echo "0")
 
     if [[ $suggestion_count -ge 5 ]]; then
         pass_test "Provides multiple remediation suggestions ($suggestion_count found)"

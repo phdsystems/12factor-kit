@@ -38,16 +38,18 @@ chmod +x "$TEST_SCRIPT"
 # Run tests
 if [[ "$VERBOSE" == "verbose" ]] || [[ "$VERBOSE" == "true" ]]; then
     echo -e "${YELLOW}Running tests in verbose mode...${NC}"
-    VERBOSE=true "$TEST_SCRIPT"
+    if VERBOSE=true "$TEST_SCRIPT"; then
+        echo -e "\n${GREEN}${BOLD}✓ All tests passed successfully!${NC}"
+    else
+        echo -e "\n${RED}${BOLD}✗ Some tests failed${NC}"
+        exit 1
+    fi
 else
     echo -e "${YELLOW}Running tests...${NC}"
-    "$TEST_SCRIPT"
-fi
-
-# Check exit code
-if [[ $? -eq 0 ]]; then
-    echo -e "\n${GREEN}${BOLD}✓ All tests passed successfully!${NC}"
-else
-    echo -e "\n${RED}${BOLD}✗ Some tests failed${NC}"
-    exit 1
+    if "$TEST_SCRIPT"; then
+        echo -e "\n${GREEN}${BOLD}✓ All tests passed successfully!${NC}"
+    else
+        echo -e "\n${RED}${BOLD}✗ Some tests failed${NC}"
+        exit 1
+    fi
 fi

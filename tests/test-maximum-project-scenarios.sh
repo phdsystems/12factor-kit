@@ -16,7 +16,7 @@ TEST_TEMP_DIR="/tmp/12factor-80-$$"
 
 # Test tracking
 TESTS_PASSED=0
-TESTS_FAILED=0
+# TESTS_FAILED=0 # Unused test counter
 
 pass_test() {
     echo "  ✓ $1"
@@ -156,7 +156,7 @@ module.exports = {
 EOF
 
 # Git setup
-cd "$MAX_PROJECT"
+cd "$MAX_PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
@@ -164,7 +164,7 @@ git add .
 git commit -q -m "Initial"
 git remote add origin https://github.com/test/repo.git
 git remote add upstream https://github.com/upstream/repo.git
-cd - >/dev/null
+cd - >/dev/null || return
 
 # Run with all flags
 "$TOOL_PATH" "$MAX_PROJECT" --verbose --remediate --depth 5 -f terminal >/dev/null 2>&1 && pass_test "Maximum coverage project"

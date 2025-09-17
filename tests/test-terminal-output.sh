@@ -11,7 +11,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m' # Unused color variable
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -135,7 +135,8 @@ test_terminal_output_high_compliance() {
     create_compliant_project "$compliant_project"
 
     # Run with terminal output
-    local output=$(timeout 10 "$TOOL_PATH" "$compliant_project" -f terminal 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$compliant_project" -f terminal 2>&1)
 
     # Check for required elements
     if echo "$output" | grep -q "12-FACTOR COMPLIANCE REPORT"; then
@@ -170,7 +171,8 @@ test_terminal_output_high_compliance() {
     fi
 
     # Check for all 12 factors
-    local factor_count=$(echo "$output" | grep -c "Factor [0-9]\|[IVX]\+\.\|Codebase\|Dependencies\|Config\|Backing\|Build\|Process\|Port\|Concurrency\|Disposability\|Dev.*prod\|Logs\|Admin" || echo "0")
+    local factor_count
+    factor_count=$(echo "$output" | grep -c "Factor [0-9]\|[IVX]\+\.\|Codebase\|Dependencies\|Config\|Backing\|Build\|Process\|Port\|Concurrency\|Disposability\|Dev.*prod\|Logs\|Admin" || echo "0")
     if [[ $factor_count -ge 10 ]]; then
         pass_test "Lists all factors (found $factor_count)"
     else
@@ -185,7 +187,8 @@ test_terminal_output_low_compliance() {
     create_poor_compliance_project "$poor_project"
 
     # Run with terminal output
-    local output=$(timeout 10 "$TOOL_PATH" "$poor_project" -f terminal 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$poor_project" -f terminal 2>&1)
 
     # Check for low score indicators
     if echo "$output" | grep -q "░"; then
@@ -218,7 +221,8 @@ test_terminal_color_codes() {
     cd - >/dev/null
 
     # Force color output
-    local output=$(TERM=xterm-256color timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output
+    output=$(TERM=xterm-256color timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     # Check for ANSI color codes
     if echo "$output" | grep -q "\[0;3[0-9]m\|\[1;3[0-9]m\|\[1m"; then
@@ -234,7 +238,8 @@ test_terminal_score_display() {
     local test_project="$TEST_TEMP_DIR/score_test"
     create_compliant_project "$test_project"
 
-    local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     # Check score format (e.g., "95/120")
     if echo "$output" | grep -q "[0-9]\+/[0-9]\+"; then
@@ -264,7 +269,8 @@ test_terminal_factor_scores() {
     local test_project="$TEST_TEMP_DIR/factor_test"
     create_compliant_project "$test_project"
 
-    local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     # Check individual factor scores
     if echo "$output" | grep -q "([0-9]\+/10)"; then
@@ -300,7 +306,8 @@ test_terminal_remediation_display() {
     cd - >/dev/null
 
     # Run with remediation
-    local output=$(timeout 10 "$TOOL_PATH" "$poor_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$poor_project" --remediate 2>&1)
 
     if echo "$output" | grep -q "npm install\|package-lock\|lock file"; then
         pass_test "Suggests lock file creation"
@@ -331,7 +338,8 @@ test_terminal_width_handling() {
     cd - >/dev/null
 
     # Test with narrow terminal
-    local output=$(COLUMNS=40 timeout 10 "$TOOL_PATH" "$test_project" 2>&1)
+    local output
+    output=$(COLUMNS=40 timeout 10 "$TOOL_PATH" "$test_project" 2>&1)
     if [[ -n "$output" ]]; then
         pass_test "Handles narrow terminal width"
     else
@@ -377,7 +385,8 @@ test_progress_bar_rendering() {
                 ;;
         esac
 
-        local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
+        local output
+        output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
         if echo "$output" | grep -q "\[.*\]"; then
             pass_test "Progress bar renders for $level compliance"
@@ -405,7 +414,8 @@ test_terminal_special_characters() {
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     if [[ -n "$output" ]]; then
         pass_test "Handles special characters without crashing"
@@ -420,7 +430,8 @@ test_terminal_empty_project() {
     local empty_project="$TEST_TEMP_DIR/empty"
     mkdir -p "$empty_project"
 
-    local output=$(timeout 10 "$TOOL_PATH" "$empty_project" -f terminal 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$empty_project" -f terminal 2>&1)
 
     if echo "$output" | grep -q "12-FACTOR\|Score\|Compliance"; then
         pass_test "Produces structured output for empty project"

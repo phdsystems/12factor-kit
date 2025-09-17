@@ -18,7 +18,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+# BLUE='\033[0;34m'  # Unused color
 CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
@@ -56,7 +56,8 @@ EOF
 
 assess_project() {
     local project_path="$1"
-    local project_name=$(basename "$project_path")
+    local project_name
+    project_name=$(basename "$project_path")
     
     echo -e "${CYAN}Assessing: $project_name${NC}"
     
@@ -84,8 +85,10 @@ assess_project() {
     
     # Extract score for summary
     if [[ -f "$project_output/report.json" ]]; then
-        local score=$(grep '"total_score"' "$project_output/report.json" | grep -o '[0-9]*' | head -1)
-        local percentage=$(grep '"percentage"' "$project_output/report.json" | grep -o '[0-9]*' | head -1)
+        local score
+        local percentage
+        score=$(grep '"total_score"' "$project_output/report.json" | grep -o '[0-9]*' | head -1)
+        percentage=$(grep '"percentage"' "$project_output/report.json" | grep -o '[0-9]*' | head -1)
         
         echo "$project_name,$score,120,$percentage" >> "${OUTPUT_DIR}/summary_${TIMESTAMP}.csv"
         

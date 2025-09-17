@@ -11,7 +11,7 @@ set -uo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m'  # Unused color
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -83,15 +83,16 @@ public class App {
 }
 EOF
 
-    cd "$java_project"
+    cd "$java_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
     git commit -q -m "Initial"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$java_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$java_project" 2>&1)
 
     if echo "$output" | grep -q "java\|maven\|pom.xml"; then
         pass_test "Java/Maven project detected"
@@ -121,13 +122,14 @@ EOF
 
     echo "// settings.gradle" > "$gradle_project/settings.gradle"
 
-    cd "$gradle_project"
+    cd "$gradle_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$gradle_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$gradle_project" 2>&1)
 
     if echo "$output" | grep -q "gradle"; then
         pass_test "Gradle project detected"
@@ -167,13 +169,14 @@ pcntl_signal(SIGTERM, function() {
 $pool = new ConnectionPool(['max' => 10]);
 EOF
 
-    cd "$php_project"
+    cd "$php_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$php_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$php_project" 2>&1)
 
     if echo "$output" | grep -q "php\|composer"; then
         pass_test "PHP/Composer project detected"
@@ -216,13 +219,14 @@ fn main() {
 }
 EOF
 
-    cd "$rust_project"
+    cd "$rust_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$rust_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$rust_project" 2>&1)
 
     if echo "$output" | grep -q "rust\|cargo"; then
         pass_test "Rust/Cargo project detected"
@@ -258,13 +262,14 @@ app.MapGet("/health", () => "OK");
 app.Run();
 EOF
 
-    cd "$dotnet_project"
+    cd "$dotnet_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$dotnet_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$dotnet_project" 2>&1)
 
     if echo "$output" | grep -q "dotnet\|csproj"; then
         pass_test ".NET project detected"
@@ -307,15 +312,16 @@ EOF
 }
 EOF
 
-    cd "$db_project"
+    cd "$db_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
     git commit -q -m "Initial"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$db_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$db_project" 2>&1)
 
     if echo "$output" | grep -q "pool\|connection"; then
         pass_test "Database pooling detected"
@@ -367,13 +373,14 @@ EOF
     mkdir -p "$cicd_project/.circleci"
     echo 'version: 2.1' > "$cicd_project/.circleci/config.yml"
 
-    cd "$cicd_project"
+    cd "$cicd_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$cicd_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$cicd_project" 2>&1)
 
     pass_test "CI/CD configurations assessed"
 }
@@ -405,13 +412,14 @@ app.get('/readiness', (req, res) => res.json({ready: true}));
 app.get('/liveness', (req, res) => res.json({alive: true}));
 EOF
 
-    cd "$monitor_project"
+    cd "$monitor_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$monitor_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$monitor_project" 2>&1)
 
     if echo "$output" | grep -q "health"; then
         pass_test "Health endpoints detected"
@@ -438,13 +446,14 @@ test_multiple_env_files() {
     echo "NODE_ENV=local" > "$env_project/.env.local"
     echo "# Example env file" > "$env_project/.env.example"
 
-    cd "$env_project"
+    cd "$env_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$env_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$env_project" 2>&1)
 
     if echo "$output" | grep -q "environment"; then
         pass_test "Multiple environment files detected"
@@ -506,13 +515,14 @@ services:
       replicas: 3
 EOF
 
-    cd "$orch_project"
+    cd "$orch_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$orch_project" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$orch_project" 2>&1)
 
     if echo "$output" | grep -q "Kubernetes\|k8s"; then
         pass_test "Kubernetes orchestration detected"

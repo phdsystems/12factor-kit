@@ -41,11 +41,11 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/no_remote"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -53,7 +53,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/multi_remote"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
@@ -61,7 +61,7 @@ git remote add origin https://github.com/test/repo.git
 git remote add upstream https://github.com/upstream/repo.git
 git remote add heroku https://git.heroku.com/app.git
 git remote add backup https://gitlab.com/test/repo.git
-cd - >/dev/null
+cd - >/dev/null || return
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -74,7 +74,7 @@ echo -e "\nFactor 2: Dependencies all types"
 PROJECT="$TEST_TEMP_DIR/node_no_lock"
 mkdir -p "$PROJECT"
 echo '{"name": "test", "dependencies": {"express": "^4.0.0"}}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -82,7 +82,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/python_no_lock"
 mkdir -p "$PROJECT"
 echo "flask==2.0.0" > "$PROJECT/requirements.txt"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -90,7 +90,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/ruby_no_lock"
 mkdir -p "$PROJECT"
 echo "source 'https://rubygems.org'" > "$PROJECT/Gemfile"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -98,7 +98,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/go_no_sum"
 mkdir -p "$PROJECT"
 echo "module example.com/app" > "$PROJECT/go.mod"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -106,7 +106,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/maven"
 mkdir -p "$PROJECT"
 echo '<?xml version="1.0"?><project></project>' > "$PROJECT/pom.xml"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -114,7 +114,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/gradle"
 mkdir -p "$PROJECT"
 echo "plugins { id 'java' }" > "$PROJECT/build.gradle"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -122,7 +122,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/php_no_lock"
 mkdir -p "$PROJECT"
 echo '{"require": {"php": ">=7.4"}}' > "$PROJECT/composer.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -130,7 +130,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/rust_no_lock"
 mkdir -p "$PROJECT"
 echo "[package]" > "$PROJECT/Cargo.toml"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -138,7 +138,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/dotnet"
 mkdir -p "$PROJECT"
 echo "<Project></Project>" > "$PROJECT/App.csproj"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -174,7 +174,7 @@ AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 PRIVATE_KEY=-----BEGIN RSA PRIVATE KEY-----
 EOF
 
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -183,7 +183,7 @@ PROJECT="$TEST_TEMP_DIR/no_env_example"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "PORT=3000" > "$PROJECT/.env"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -197,7 +197,7 @@ PROJECT="$TEST_TEMP_DIR/no_conn_string"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "const db = 'localhost:5432';" > "$PROJECT/database.js"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -210,7 +210,7 @@ echo -e "\nFactor 5: Build/Release/Run"
 PROJECT="$TEST_TEMP_DIR/no_docker"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -219,7 +219,7 @@ PROJECT="$TEST_TEMP_DIR/basic_docker"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "FROM node:18" > "$PROJECT/Dockerfile"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -228,7 +228,7 @@ PROJECT="$TEST_TEMP_DIR/no_cicd"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "FROM node:18" > "$PROJECT/Dockerfile"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -249,7 +249,7 @@ app.use(session({ store: new FileStore() }));
 localStorage.setItem('key', 'value');
 fs.writeFileSync('/tmp/data.txt', 'data');
 EOF
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -260,7 +260,7 @@ echo '{"name": "test"}' > "$PROJECT/package.json"
 touch "$PROJECT/app.pid"
 touch "$PROJECT/server.pid"
 echo "process.pid" > "$PROJECT/pidfile"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -274,7 +274,7 @@ PROJECT="$TEST_TEMP_DIR/no_port"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "app.listen(3000);" > "$PROJECT/app.js"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -287,7 +287,7 @@ echo -e "\nFactor 8: Concurrency"
 PROJECT="$TEST_TEMP_DIR/no_scaling"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -301,7 +301,7 @@ PROJECT="$TEST_TEMP_DIR/no_signals"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "console.log('app');" > "$PROJECT/app.js"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -310,7 +310,7 @@ PROJECT="$TEST_TEMP_DIR/no_health"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "app.listen(3000);" > "$PROJECT/app.js"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -323,7 +323,7 @@ echo -e "\nFactor 10: Dev/Prod parity"
 PROJECT="$TEST_TEMP_DIR/no_docker_parity"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -333,7 +333,7 @@ mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "FROM node:18" > "$PROJECT/Dockerfile"
 echo "version: '3'" > "$PROJECT/docker-compose.yml"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -342,7 +342,7 @@ PROJECT="$TEST_TEMP_DIR/no_env_configs"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
 echo "FROM node:18" > "$PROJECT/Dockerfile"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -358,7 +358,7 @@ echo '{"name": "test"}' > "$PROJECT/package.json"
 touch "$PROJECT/app.log"
 touch "$PROJECT/error.log"
 touch "$PROJECT/logs/application.log"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -366,7 +366,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/no_logging"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -379,7 +379,7 @@ echo -e "\nFactor 12: Admin processes"
 PROJECT="$TEST_TEMP_DIR/no_migrations"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -387,7 +387,7 @@ echo -n "."
 PROJECT="$TEST_TEMP_DIR/no_scripts"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 "$TOOL_PATH" "$PROJECT" --remediate >/dev/null 2>&1
 echo -n "."
 
@@ -399,7 +399,7 @@ echo -e "\nAll format combinations with remediation"
 PROJECT="$TEST_TEMP_DIR/all_formats"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 
 # All formats with remediation
 "$TOOL_PATH" "$PROJECT" -f terminal --remediate >/dev/null 2>&1

@@ -11,7 +11,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m' # Unused color variable
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -62,7 +62,7 @@ create_sample_project() {
     echo '{"name": "test-project", "version": "1.0.0"}' > "$project_dir/package.json"
     echo "node_modules/" > "$project_dir/.gitignore"
     echo "DATABASE_URL=\${DB_URL}" > "$project_dir/.env"
-    echo "FROM node:18\nCOPY . .\nCMD [\"npm\", \"start\"]" > "$project_dir/Dockerfile"
+    printf "FROM node:18\nCOPY . .\nCMD [\"npm\", \"start\"]" > "$project_dir/Dockerfile"
 
     # Initialize git repository
     cd "$project_dir"
@@ -83,7 +83,8 @@ test_json_output_format() {
     create_sample_project "$json_project"
 
     # Test JSON output generation
-    local json_output=$(timeout 10 "$TOOL_PATH" "$json_project" -f json 2>/dev/null)
+    local json_output
+    json_output=$(timeout 10 "$TOOL_PATH" "$json_project" -f json 2>/dev/null)
 
     # Validate JSON structure
     if echo "$json_output" | python3 -m json.tool >/dev/null 2>&1; then
@@ -130,7 +131,8 @@ test_json_output_format() {
     fi
 
     # Check that factors array has 12 elements
-    local factor_count=$(echo "$json_output" | python3 -c "import json, sys; data=json.load(sys.stdin); print(len(data['factors']))" 2>/dev/null || echo "0")
+    local factor_count
+    factor_count=$(echo "$json_output" | python3 -c "import json, sys; data=json.load(sys.stdin); print(len(data['factors']))" 2>/dev/null || echo "0")
     if [[ "$factor_count" == "12" ]]; then
         pass_test "JSON contains all 12 factors"
     else
@@ -138,7 +140,8 @@ test_json_output_format() {
     fi
 
     # Test JSON with verbose mode
-    local json_verbose=$(timeout 10 "$TOOL_PATH" "$json_project" -f json --verbose 2>/dev/null)
+    local json_verbose
+    json_verbose=$(timeout 10 "$TOOL_PATH" "$json_project" -f json --verbose 2>/dev/null)
     if echo "$json_verbose" | python3 -m json.tool >/dev/null 2>&1; then
         pass_test "JSON with verbose mode is valid"
     else
@@ -153,7 +156,8 @@ test_markdown_output_format() {
     create_sample_project "$md_project"
 
     # Test markdown output generation
-    local md_output=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown 2>/dev/null)
+    local md_output
+    md_output=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown 2>/dev/null)
 
     # Check markdown structure
     if echo "$md_output" | grep -q "# 12-Factor App Compliance Report"; then
@@ -207,7 +211,8 @@ test_markdown_output_format() {
     fi
 
     # Test markdown with verbose mode
-    local md_verbose=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown --verbose 2>/dev/null)
+    local md_verbose
+    md_verbose=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown --verbose 2>/dev/null)
     if [[ ${#md_verbose} -gt ${#md_output} ]]; then
         pass_test "Markdown verbose mode produces more content"
     else
@@ -222,7 +227,8 @@ test_terminal_output_coverage() {
     create_sample_project "$terminal_project"
 
     # Test default terminal output
-    local terminal_output=$(timeout 10 "$TOOL_PATH" "$terminal_project" 2>/dev/null)
+    local terminal_output
+    terminal_output=$(timeout 10 "$TOOL_PATH" "$terminal_project" 2>/dev/null)
 
     if echo "$terminal_output" | grep -q "12-Factor App Compliance Assessment"; then
         pass_test "Terminal output contains header"
@@ -267,7 +273,8 @@ test_remediation_output() {
     cd - >/dev/null
 
     # Test remediation mode
-    local remediation_output=$(timeout 10 "$TOOL_PATH" "$remediation_project" --remediate 2>/dev/null || true)
+    local remediation_output
+    remediation_output=$(timeout 10 "$TOOL_PATH" "$remediation_project" --remediate 2>/dev/null || true)
 
     if echo "$remediation_output" | grep -q "Remediation\|Recommended\|TODO\|FIXME\|Improvements"; then
         pass_test "Remediation mode produces suggestions"

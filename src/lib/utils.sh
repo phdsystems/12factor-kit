@@ -90,17 +90,24 @@ get_file_count() {
 # Detect primary language
 detect_primary_language() {
     local path="$1"
-    local languages=()
-    
     # Count files by extension
-    local js_count=$(count_files "$path" "*.js")
-    local py_count=$(count_files "$path" "*.py")
-    local go_count=$(count_files "$path" "*.go")
-    local rb_count=$(count_files "$path" "*.rb")
-    local java_count=$(count_files "$path" "*.java")
-    local rs_count=$(count_files "$path" "*.rs")
-    local php_count=$(count_files "$path" "*.php")
-    local cs_count=$(count_files "$path" "*.cs")
+    local js_count
+    local py_count
+    local go_count
+    local rb_count
+    local java_count
+    local rs_count
+    local php_count
+    local cs_count
+
+    js_count=$(count_files "$path" "*.js")
+    py_count=$(count_files "$path" "*.py")
+    go_count=$(count_files "$path" "*.go")
+    rb_count=$(count_files "$path" "*.rb")
+    java_count=$(count_files "$path" "*.java")
+    rs_count=$(count_files "$path" "*.rs")
+    php_count=$(count_files "$path" "*.php")
+    cs_count=$(count_files "$path" "*.cs")
     
     # Determine primary language
     local max_count=0

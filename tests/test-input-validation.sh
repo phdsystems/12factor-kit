@@ -9,7 +9,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -59,7 +59,8 @@ test_missing_format_argument() {
     echo "{}" > "$TEST_TEMP_DIR/test_project/package.json"
 
     # Test -f without argument
-    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f 2>&1 || true)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f 2>&1 || true)
     if [[ "$output" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing format argument"
     else
@@ -67,7 +68,8 @@ test_missing_format_argument() {
     fi
 
     # Test --format without argument
-    local output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --format 2>&1 || true)
+    local output2
+    output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --format 2>&1 || true)
     if [[ "$output2" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing --format argument"
     else
@@ -82,7 +84,8 @@ test_invalid_format_validation() {
     echo "{}" > "$TEST_TEMP_DIR/test_project/package.json"
 
     # Test invalid format with warning
-    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
     if [[ "$output" == *"Warning: Unknown format"* ]]; then
         pass_test "Shows warning for invalid format"
     else
@@ -103,7 +106,8 @@ test_missing_depth_argument() {
     mkdir -p "$TEST_TEMP_DIR/test_project"
 
     # Test -d without argument
-    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2>&1 || true)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2>&1 || true)
     if [[ "$output" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing depth argument"
     else
@@ -111,7 +115,8 @@ test_missing_depth_argument() {
     fi
 
     # Test --depth without argument
-    local output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --depth 2>&1 || true)
+    local output2
+    output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --depth 2>&1 || true)
     if [[ "$output2" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing --depth argument"
     else
@@ -125,7 +130,8 @@ test_invalid_depth_values() {
     mkdir -p "$TEST_TEMP_DIR/test_project"
 
     # Test negative depth
-    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d -1 2>&1 || true)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d -1 2>&1 || true)
     if [[ "$output" == *"must be a positive integer"* ]]; then
         pass_test "Rejects negative depth"
     else
@@ -133,7 +139,8 @@ test_invalid_depth_values() {
     fi
 
     # Test zero depth
-    local output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 0 2>&1 || true)
+    local output2
+    output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 0 2>&1 || true)
     if [[ "$output2" == *"must be a positive integer"* ]]; then
         pass_test "Rejects zero depth"
     else
@@ -141,7 +148,8 @@ test_invalid_depth_values() {
     fi
 
     # Test non-numeric depth
-    local output3=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d abc 2>&1 || true)
+    local output3
+    output3=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d abc 2>&1 || true)
     if [[ "$output3" == *"must be a positive integer"* ]]; then
         pass_test "Rejects non-numeric depth"
     else
@@ -149,7 +157,8 @@ test_invalid_depth_values() {
     fi
 
     # Test fractional depth
-    local output4=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2.5 2>&1 || true)
+    local output4
+    output4=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2.5 2>&1 || true)
     if [[ "$output4" == *"must be a positive integer"* ]]; then
         pass_test "Rejects fractional depth"
     else
@@ -186,7 +195,8 @@ test_help_option() {
     run_test "Help option"
 
     # Test -h
-    local output=$(timeout 10 "$TOOL_PATH" -h 2>&1 || true)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" -h 2>&1 || true)
     if [[ "$output" == *"12-Factor App Compliance Assessment Tool"* ]]; then
         pass_test "Shows help with -h"
     else
@@ -194,7 +204,8 @@ test_help_option() {
     fi
 
     # Test --help
-    local output2=$(timeout 10 "$TOOL_PATH" --help 2>&1 || true)
+    local output2
+    output2=$(timeout 10 "$TOOL_PATH" --help 2>&1 || true)
     if [[ "$output2" == *"12-Factor App Compliance Assessment Tool"* ]]; then
         pass_test "Shows help with --help"
     else
@@ -206,7 +217,8 @@ test_nonexistent_path_error() {
     run_test "Nonexistent path error handling"
 
     # Test specific error message
-    local output=$(timeout 10 "$TOOL_PATH" "/completely/fake/path" 2>&1 || true)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "/completely/fake/path" 2>&1 || true)
     if [[ "$output" == *"does not exist"* ]]; then
         pass_test "Shows 'does not exist' error message"
     else

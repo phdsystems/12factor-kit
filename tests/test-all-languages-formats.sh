@@ -112,11 +112,13 @@ EOF
     esac
 
     # Add common files for all projects
-    echo "PORT=\${PORT:-3000}" > "$PROJECT/.env"
-    echo "DATABASE_URL=\${DATABASE_URL}" >> "$PROJECT/.env"
-    echo "REDIS_URL=\${REDIS_URL}" >> "$PROJECT/.env"
-    echo "API_KEY=\${API_KEY}" >> "$PROJECT/.env"
-    echo "SECRET_KEY=\${SECRET_KEY}" >> "$PROJECT/.env"
+    {
+      echo "PORT=\${PORT:-3000}"
+      echo "DATABASE_URL=\${DATABASE_URL}"
+      echo "REDIS_URL=\${REDIS_URL}"
+      echo "API_KEY=\${API_KEY}"
+      echo "SECRET_KEY=\${SECRET_KEY}"
+    } > "$PROJECT/.env"
 
     echo "PORT=3000" > "$PROJECT/.env.example"
     echo "PORT=3000" > "$PROJECT/.env.development"
@@ -216,7 +218,7 @@ EOF
 EOF
 
     # Git setup with multiple remotes
-    cd "$PROJECT"
+    cd "$PROJECT" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
@@ -225,7 +227,7 @@ EOF
     git remote add origin https://github.com/test/repo.git
     git remote add upstream https://github.com/upstream/repo.git
     git remote add heroku https://git.heroku.com/app.git
-    cd - >/dev/null
+    cd - >/dev/null || return
 
     # Test all format combinations
     for format in terminal json markdown; do
@@ -254,11 +256,11 @@ echo 'SECRET_KEY="my-secret-key-here"' > "$PROJECT/.env"
 echo 'AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE' > "$PROJECT/aws.config"
 echo 'private_key = "-----BEGIN RSA PRIVATE KEY-----"' > "$PROJECT/keys.js"
 
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose --remediate >/dev/null 2>&1 && run_test
 
@@ -272,11 +274,11 @@ timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 PROJECT="$TEST_TEMP_DIR/no_deps"
 mkdir -p "$PROJECT"
 echo '{"name": "no-deps"}' > "$PROJECT/package.json"
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test projects with only lock files
@@ -285,11 +287,11 @@ mkdir -p "$PROJECT"
 echo '{}' > "$PROJECT/package-lock.json"
 echo 'GEM' > "$PROJECT/Gemfile.lock"
 echo '// Cargo.lock' > "$PROJECT/Cargo.lock"
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test with various signal handling patterns
@@ -342,11 +344,11 @@ func main() {
 }
 EOF
 
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test with various health check patterns
@@ -367,11 +369,11 @@ app.get('/liveness', (req, res) => res.json({alive: true}));
 app.get('/alive', (req, res) => res.sendStatus(200));
 EOF
 
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test with connection pooling patterns
@@ -399,11 +401,11 @@ mongoose.connect(url, {
 });
 EOF
 
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # ==============================================================================
@@ -492,7 +494,7 @@ app.get('/liveness', () => {});
 const pool = { max: 10 };
 EOF
 
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
@@ -500,7 +502,7 @@ git add .
 timeout 5 git commit -q -m "Initial"
 git remote add origin https://github.com/test/repo.git
 git remote add upstream https://github.com/upstream/repo.git
-cd - >/dev/null
+cd - >/dev/null || return
 
 # Run with verbose in all combinations
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
@@ -519,11 +521,11 @@ echo -e "\n\n${BOLD}Section 4: Environment variables${NC}"
 PROJECT="$TEST_TEMP_DIR/env_test"
 mkdir -p "$PROJECT"
 echo '{"name": "env"}' > "$PROJECT/package.json"
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
-cd - >/dev/null
+cd - >/dev/null || return
 
 # Test all environment variable combinations
 VERBOSE=true REPORT_FORMAT=json CHECK_DEPTH=5 STRICT_MODE=false timeout 10 "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
@@ -579,14 +581,14 @@ echo 'const cluster = require("cluster");' > "$PROJECT/worker.js"
 echo 'const winston = require("winston");' > "$PROJECT/logger.js"
 echo 'CREATE TABLE users;' > "$PROJECT/migrations/001.sql"
 echo '{"apps": [{"script": "app.js", "instances": "max"}]}' > "$PROJECT/ecosystem.config.js"
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 git add .
 timeout 5 git commit -q -m "Initial"
 git remote add origin https://github.com/test/repo.git
-cd - >/dev/null
+cd - >/dev/null || return
 timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test zero score project

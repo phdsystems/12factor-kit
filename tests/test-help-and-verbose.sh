@@ -11,7 +11,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -58,7 +58,8 @@ test_help_function_coverage() {
     run_test "Help function coverage"
 
     # Test --help flag
-    local help_output=$(timeout 10 "$TOOL_PATH" --help 2>&1)
+    local help_output
+    help_output=$(timeout 10 "$TOOL_PATH" --help 2>&1)
     if [[ "$help_output" == *"12-Factor App Compliance Assessment Tool"* ]]; then
         pass_test "Help function shows main title"
     else
@@ -90,7 +91,8 @@ test_help_function_coverage() {
     fi
 
     # Test -h short flag
-    local short_help=$(timeout 10 "$TOOL_PATH" -h 2>&1)
+    local short_help
+    short_help=$(timeout 10 "$TOOL_PATH" -h 2>&1)
     if [[ "$short_help" == *"12-Factor App Compliance Assessment Tool"* ]]; then
         pass_test "Short help flag works"
     else
@@ -105,7 +107,8 @@ test_verbose_logging_coverage() {
     echo '{"name": "test"}' > "$TEST_TEMP_DIR/verbose_test/package.json"
 
     # Test verbose mode enabled
-    local verbose_output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/verbose_test" --verbose 2>&1)
+    local verbose_output
+    verbose_output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/verbose_test" --verbose 2>&1)
     if [[ "$verbose_output" == *"[DEBUG]"* ]] || [[ "$verbose_output" == *"verbose"* ]]; then
         pass_test "Verbose mode produces debug output"
     else
@@ -118,7 +121,8 @@ test_verbose_logging_coverage() {
     fi
 
     # Test non-verbose mode (default)
-    local normal_output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/verbose_test" 2>&1)
+    local normal_output
+    normal_output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/verbose_test" 2>&1)
     if [[ "$normal_output" != *"[DEBUG]"* ]]; then
         pass_test "Normal mode does not show debug output"
     else
@@ -137,7 +141,8 @@ test_help_with_invalid_args() {
     run_test "Help with invalid arguments"
 
     # Test help after invalid argument (should still show help)
-    local invalid_help=$(timeout 10 "$TOOL_PATH" --invalid-flag --help 2>&1 || true)
+    local invalid_help
+    invalid_help=$(timeout 10 "$TOOL_PATH" --invalid-flag --help 2>&1 || true)
     if [[ "$invalid_help" == *"12-Factor App Compliance Assessment Tool"* ]]; then
         pass_test "Help shows even with invalid args"
     else

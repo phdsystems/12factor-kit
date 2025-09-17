@@ -113,7 +113,7 @@ echo '#!/bin/bash' > "$PROJECT/scripts/migrate.sh"
 echo '#!/bin/bash' > "$PROJECT/scripts/deploy.sh"
 echo '#!/bin/bash' > "$PROJECT/scripts/seed.sh"
 
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
@@ -122,7 +122,7 @@ git commit -q -m "Initial"
 git remote add origin https://github.com/test/repo.git
 git remote add upstream https://github.com/upstream/repo.git
 git remote add heroku https://git.heroku.com/app.git
-cd - >/dev/null
+cd - >/dev/null || return
 
 # Run with maximum verbosity
 VERBOSE=true "$TOOL_PATH" "$PROJECT" --verbose --remediate --depth 10 -f terminal >/dev/null 2>&1
@@ -209,7 +209,7 @@ echo -n "Test 5: Environment variables "
 PROJECT="$TEST_TEMP_DIR/env_vars"
 mkdir -p "$PROJECT"
 echo '{"name": "test"}' > "$PROJECT/package.json"
-cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com" && cd - >/dev/null
+(cd "$PROJECT" && git init -q && git config user.name "Test" && git config user.email "test@example.com")
 
 VERBOSE=true "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1
 VERBOSE=false "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1
@@ -305,7 +305,7 @@ echo 'CREATE TABLE' > "$PROJECT/flyway/V1.sql"
 echo '#!/bin/bash' > "$PROJECT/scripts/migrate.sh"
 echo '#!/bin/bash' > "$PROJECT/scripts/deploy.sh"
 
-cd "$PROJECT"
+cd "$PROJECT" || return
 git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
@@ -313,7 +313,7 @@ git add .
 git commit -q -m "Initial"
 git remote add origin https://github.com/test/repo.git
 git remote add upstream https://github.com/upstream/repo.git
-cd - >/dev/null
+cd - >/dev/null || return
 
 "$TOOL_PATH" "$PROJECT" --verbose --remediate --strict --depth 10 -f terminal >/dev/null 2>&1 || true
 "$TOOL_PATH" "$PROJECT" --verbose --remediate -f json >/dev/null 2>&1

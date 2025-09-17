@@ -11,7 +11,7 @@ set -uo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -160,7 +160,7 @@ EOF
     echo "#!/bin/bash" > "$verbose_project/scripts/migrate.sh"
 
     # Create git repo with multiple remotes
-    cd "$verbose_project"
+    cd "$verbose_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
@@ -168,10 +168,11 @@ EOF
     timeout 5 git commit -q -m "Initial"
     git remote add origin https://github.com/test/repo.git
     git remote add upstream https://github.com/upstream/repo.git
-    cd - >/dev/null
+    cd - >/dev/null || return
 
     # Run with verbose flag
-    local output=$(timeout 10 "$TOOL_PATH" "$verbose_project" --verbose 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$verbose_project" --verbose 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -198,16 +199,16 @@ test_depth_parameter_coverage() {
     echo '{"name": "root"}' > "$depth_project/package.json"
     echo '{"name": "deep"}' > "$depth_project/level1/level2/level3/package.json"
 
-    cd "$depth_project"
+    cd "$depth_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
     # Test various depth values
     for depth in 1 2 3 4 5 10; do
-        local output=$(timeout 10 "$TOOL_PATH" "$depth_project" --depth $depth 2>&1)
-        if [[ $? -eq 0 ]]; then
+        local output
+        if output=$(timeout 10 "$TOOL_PATH" "$depth_project" --depth $depth 2>&1); then
             pass_test "Depth $depth processed successfully"
         else
             fail_test "Depth $depth failed"
@@ -242,14 +243,15 @@ EOF
     # No logging setup (factor 11 issue)
     # No migrations (factor 12 issue)
 
-    cd "$remediate_project"
+    cd "$remediate_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
     # Run with remediation flag
-    local output=$(timeout 10 "$TOOL_PATH" "$remediate_project" --remediate 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$remediate_project" --remediate 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -319,15 +321,16 @@ EOF
 
     echo "worker: celery -A app worker" > "$python_project/Procfile"
 
-    cd "$python_project"
+    cd "$python_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
     timeout 5 git commit -q -m "Initial"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$(timeout 10 "$TOOL_PATH" "$python_project" 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$python_project" 2>&1)
     if echo "$output" | grep -q "python"; then
         pass_test "Python project detected correctly"
     else
@@ -347,13 +350,14 @@ EOF
 
     echo "GEM" > "$ruby_project/Gemfile.lock"
 
-    cd "$ruby_project"
+    cd "$ruby_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$(timeout 10 "$TOOL_PATH" "$ruby_project" 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$ruby_project" 2>&1)
     if echo "$output" | grep -q "ruby"; then
         pass_test "Ruby project detected correctly"
     else
@@ -374,13 +378,14 @@ EOF
 
     echo "// go.sum file" > "$go_project/go.sum"
 
-    cd "$go_project"
+    cd "$go_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$(timeout 10 "$TOOL_PATH" "$go_project" 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$go_project" 2>&1)
     if echo "$output" | grep -q "go"; then
         pass_test "Go project detected correctly"
     else
@@ -398,7 +403,8 @@ test_error_handling_paths() {
     echo '{"name": "readonly"}' > "$readonly_dir/package.json"
     chmod 444 "$readonly_dir"
 
-    local output=$(timeout 10 "$TOOL_PATH" "$readonly_dir" 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$readonly_dir" 2>&1)
     chmod 755 "$readonly_dir"  # Restore permissions for cleanup
 
     pass_test "Handled read-only directory"
@@ -422,7 +428,8 @@ test_error_handling_paths() {
     # Create a socket file (simulate)
     touch "$special_dir/socket.sock"
 
-    local output=$(timeout 10 "$TOOL_PATH" "$special_dir" 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$special_dir" 2>&1)
     pass_test "Handled special file types"
 }
 
@@ -442,13 +449,14 @@ test_json_output_edge_cases() {
 }
 EOF
 
-    cd "$json_project"
+    cd "$json_project" || return
     git init -q
     git config user.name "Test User with \"quotes\""
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$(timeout 10 "$TOOL_PATH" "$json_project" -f json 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$json_project" -f json 2>&1)
 
     # Try to parse the JSON
     if echo "$output" | python3 -m json.tool >/dev/null 2>&1; then
@@ -469,15 +477,16 @@ test_markdown_output_complex() {
     echo '# README' > "$md_project/README.md"
     echo '## Docs' > "$md_project/docs/API.md"
 
-    cd "$md_project"
+    cd "$md_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
     timeout 5 git commit -q -m "Initial"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown 2>&1)
 
     if echo "$output" | grep -q "^#"; then
         pass_test "Markdown output has proper headers"
@@ -500,15 +509,15 @@ test_combined_flags_coverage() {
     mkdir -p "$combined_project"
     echo '{"name": "combined"}' > "$combined_project/package.json"
 
-    cd "$combined_project"
+    cd "$combined_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
     # Test all combinations
-    local output=$(timeout 10 "$TOOL_PATH" "$combined_project" --verbose --remediate --depth 5 -f json 2>&1)
-    if [[ $? -eq 0 ]]; then
+    local output
+    if output=$(timeout 10 "$TOOL_PATH" "$combined_project" --verbose --remediate --depth 5 -f json 2>&1); then
         pass_test "All flags combined successfully"
     else
         pass_test "Combined flags processed"
@@ -531,11 +540,11 @@ test_environment_variables() {
     mkdir -p "$env_project"
     echo '{"name": "env"}' > "$env_project/package.json"
 
-    cd "$env_project"
+    cd "$env_project" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
     # Test with environment variables set
     VERBOSE=true REPORT_FORMAT=json CHECK_DEPTH=5 timeout 10 "$TOOL_PATH" "$env_project" >/dev/null 2>&1
@@ -551,7 +560,8 @@ test_help_function_complete() {
     run_test "Help function complete coverage"
 
     # Test short help flag
-    local output=$(timeout 10 "$TOOL_PATH" -h 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" -h 2>&1)
     if echo "$output" | grep -q "Usage:"; then
         pass_test "Short help flag (-h) works"
     else

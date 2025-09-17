@@ -11,7 +11,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m' # Unused color variable
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -80,7 +80,8 @@ test_nonexistent_directory() {
     fi
 
     # Check error message
-    local error_output=$(timeout 10 "$TOOL_PATH" "$nonexistent_dir" 2>&1 || true)
+    local error_output
+    error_output=$(timeout 10 "$TOOL_PATH" "$nonexistent_dir" 2>&1 || true)
     if [[ "$error_output" == *"does not exist"* ]]; then
         pass_test "Shows appropriate error message"
     else
@@ -111,7 +112,8 @@ test_invalid_format_parameter() {
     setup_test_environment
 
     # Test invalid format
-    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
     # Note: Current implementation doesn't validate format, but should handle gracefully
     # This tests that invalid formats don't crash the tool
     pass_test "Handles invalid format parameter gracefully"
@@ -179,7 +181,8 @@ test_empty_directory() {
     fi
 
     # Check that it produces some output
-    local output=$(timeout 10 "$TOOL_PATH" "$empty_dir" 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$empty_dir" 2>&1)
     if [[ -n "$output" ]]; then
         pass_test "Produces output for empty directory"
     else

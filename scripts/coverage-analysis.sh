@@ -84,7 +84,9 @@ if [[ -d "$COVERAGE_DIR" ]]; then
         if command -v grep &> /dev/null; then
             coverage_line=$(grep -oP 'class="covered_percent">.*?<' "$COVERAGE_DIR/index.html" 2>/dev/null | head -1 || true)
             if [[ -n "$coverage_line" ]]; then
-                coverage_percent=$(echo "$coverage_line" | sed 's/.*>\(.*\)<.*/\1/')
+                # Extract coverage percentage between > and <
+                coverage_percent="${coverage_line#*>}"
+                coverage_percent="${coverage_percent%<*}"
                 echo
                 echo -e "${BOLD}Overall Coverage: ${GREEN}${coverage_percent}${NC}"
             fi

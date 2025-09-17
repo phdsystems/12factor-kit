@@ -11,7 +11,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m' # Unused color variable
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -77,7 +77,8 @@ test_multiple_git_remotes() {
     cd - >/dev/null
 
     # Test assessment should detect multiple remotes
-    local output=$(timeout 10 "$TOOL_PATH" "$multi_remote_project" 2>/dev/null)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$multi_remote_project" 2>/dev/null)
     if echo "$output" | grep -q -i "multiple.*remote\|remote.*multiple"; then
         pass_test "Detects multiple git remotes"
     else
@@ -102,7 +103,8 @@ test_no_lock_file_scenario() {
     timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_lock_project" 2>/dev/null)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_lock_project" 2>/dev/null)
     if echo "$output" | grep -q -i "no.*lock.*file\|lock.*file.*missing"; then
         pass_test "Detects missing lock file"
     else
@@ -129,7 +131,8 @@ test_hardcoded_secrets_detection() {
     timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$secrets_project" 2>/dev/null)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$secrets_project" 2>/dev/null)
     if echo "$output" | grep -q -i "hardcoded\|secret\|credential"; then
         pass_test "Detects hardcoded secrets"
     else
@@ -161,7 +164,8 @@ EOF
     timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$single_stage_project" 2>/dev/null)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$single_stage_project" 2>/dev/null)
     if echo "$output" | grep -q -i "single.*stage\|single-stage"; then
         pass_test "Detects single-stage Dockerfile"
     else
@@ -198,7 +202,8 @@ EOF
     timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$session_project" 2>/dev/null)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$session_project" 2>/dev/null)
     if echo "$output" | grep -q -i "session\|state.*management\|localStorage\|cookie"; then
         pass_test "Detects session/state management"
     else
@@ -224,7 +229,8 @@ test_no_concurrency_features() {
     timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_concurrency_project" 2>/dev/null)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_concurrency_project" 2>/dev/null)
     # This should trigger remediation suggestions for concurrency
     if echo "$output" | grep -q -i "concurrency\|scaling\|worker\|process"; then
         pass_test "Suggests concurrency improvements"
@@ -262,7 +268,8 @@ EOF
     timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_signals_project" 2>/dev/null")
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_signals_project" 2>/dev/null)
     if echo "$output" | grep -q -i "signal\|SIGTERM\|SIGINT\|graceful"; then
         pass_test "Detects missing signal handling"
     else
@@ -295,7 +302,8 @@ EOF
     timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$no_health_project" 2>/dev/null")
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$no_health_project" 2>/dev/null)
     if echo "$output" | grep -q -i "health.*check\|health.*endpoint\|readiness\|liveness"; then
         pass_test "Suggests health check endpoints"
     else
@@ -395,7 +403,8 @@ EOF
     git remote add origin https://github.com/user/complex.git
     cd - >/dev/null
 
-    local output=$(timeout 10 "$TOOL_PATH" "$complex_project" 2>/dev/null")
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$complex_project" 2>/dev/null)
     if [[ ${#output} -gt 500 ]]; then
         pass_test "Produces comprehensive assessment for complex project"
     else

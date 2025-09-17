@@ -10,7 +10,7 @@ set -uo pipefail
 
 TOOL_PATH="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/bin/twelve-factor-reviewer"
 TEST_DIR="/tmp/12f-ultra-$$"
-trap "rm -rf $TEST_DIR" EXIT
+trap 'rm -rf "$TEST_DIR"' EXIT
 
 echo "Ultra-comprehensive test - Running 500+ test combinations..."
 echo "This will take several minutes..."
@@ -61,10 +61,12 @@ for lang in node python ruby go java php rust dotnet generic; do
   esac
 
   # Common files for all
-  echo "PORT=\${PORT:-3000}" > "$DIR/.env"
-  echo "DATABASE_URL=\${DATABASE_URL}" >> "$DIR/.env"
-  echo "REDIS_URL=\${REDIS_URL}" >> "$DIR/.env"
-  echo "SECRET_KEY=\${SECRET_KEY}" >> "$DIR/.env"
+  {
+    echo "PORT=\${PORT:-3000}"
+    echo "DATABASE_URL=\${DATABASE_URL}"
+    echo "REDIS_URL=\${REDIS_URL}"
+    echo "SECRET_KEY=\${SECRET_KEY}"
+  } > "$DIR/.env"
 
   for env in .env.example .env.development .env.production .env.test .env.staging .env.local; do
     echo "PORT=3000" > "$DIR/$env"
@@ -143,7 +145,7 @@ EOF
   echo '#!/bin/bash' > "$DIR/scripts/deploy.sh"
 
   # Git
-  cd "$DIR"
+  cd "$DIR" || return
   git init -q 2>/dev/null
   git config user.name "Test"
   git config user.email "test@test.com"
@@ -151,12 +153,13 @@ EOF
   timeout 5 git commit -q -m "Initial" 2>/dev/null
   git remote add origin https://github.com/test/repo.git 2>/dev/null
   git remote add upstream https://github.com/upstream/repo.git 2>/dev/null
-  cd - >/dev/null
+  cd - >/dev/null || return
 
   # Run every combination for this language
   for format in terminal json markdown; do
     for flags in "" "--verbose" "--remediate" "--strict" "--verbose --remediate" "--verbose --strict" "--remediate --strict" "--verbose --remediate --strict"; do
       for depth in 1 3 5 10; do
+        # shellcheck disable=SC2086
         $TOOL_PATH "$DIR" -f $format --depth $depth $flags >/dev/null 2>&1 || true
         ((COUNT++))
         if [[ $((COUNT % 50)) -eq 0 ]]; then
@@ -198,31 +201,31 @@ $TOOL_PATH "$DIR" --verbose --remediate >/dev/null 2>&1
 DIR="$TEST_DIR/multi_remote"
 mkdir -p "$DIR"
 echo '{"name":"test"}' > "$DIR/package.json"
-cd "$DIR"
+cd "$DIR" || return
 git init -q 2>/dev/null
 git config user.name "Test"
 git config user.email "test@test.com"
 for remote in origin upstream heroku backup gitlab bitbucket; do
   git remote add $remote https://github.com/$remote/repo.git 2>/dev/null
 done
-cd - >/dev/null
+cd - >/dev/null || return
 $TOOL_PATH "$DIR" --verbose >/dev/null 2>&1
 ((COUNT++))
 
 # Help and errors
-$TOOL_PATH -h 2>&1 >/dev/null || true
-$TOOL_PATH --help 2>&1 >/dev/null || true
-$TOOL_PATH /nonexistent 2>&1 >/dev/null || true
-$TOOL_PATH --invalid 2>&1 >/dev/null || true
-$TOOL_PATH -f invalid 2>&1 >/dev/null || true
-$TOOL_PATH --depth 999 2>&1 >/dev/null || true
+$TOOL_PATH -h >/dev/null 2>&1 || true
+$TOOL_PATH --help >/dev/null 2>&1 || true
+$TOOL_PATH /nonexistent >/dev/null 2>&1 || true
+$TOOL_PATH --invalid >/dev/null 2>&1 || true
+$TOOL_PATH -f invalid >/dev/null 2>&1 || true
+$TOOL_PATH --depth 999 >/dev/null 2>&1 || true
 ((COUNT+=6))
 
 # Environment variables
 DIR="$TEST_DIR/env_test"
 mkdir -p "$DIR"
 echo '{"name":"test"}' > "$DIR/package.json"
-cd "$DIR" && git init -q 2>/dev/null && git config user.name "T" && git config user.email "t@t.c" && cd - >/dev/null
+cd "$DIR" && git init -q 2>/dev/null && git config user.name "T" && git config user.email "t@t.c" && cd - >/dev/null || return
 
 VERBOSE=true $TOOL_PATH "$DIR" >/dev/null 2>&1
 VERBOSE=false $TOOL_PATH "$DIR" >/dev/null 2>&1

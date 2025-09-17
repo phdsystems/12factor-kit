@@ -12,9 +12,9 @@ set -euo pipefail
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+# BLUE='\033[0;34m'  # Unused color
 CYAN='\033[0;36m'
-MAGENTA='\033[0;35m'
+# MAGENTA='\033[0;35m'  # Unused color
 BOLD='\033[1m'
 NC='\033[0m' # No Color
 
@@ -140,7 +140,8 @@ assess_factor_1_codebase() {
         details+="✅ Git repository found\n"
         
         # Check for single remote
-        local remote_count=$(cd "$PROJECT_PATH" && git remote | wc -l 2>/dev/null || echo 0)
+        local remote_count
+        remote_count=$(cd "$PROJECT_PATH" && git remote | wc -l 2>/dev/null || echo 0)
         if [[ $remote_count -eq 1 ]]; then
             score=$((score + 3))
             details+="✅ Single remote repository\n"
@@ -262,7 +263,8 @@ assess_factor_3_config() {
     fi
     
     # Check for hardcoded configs
-    local config_files=$(find "$PROJECT_PATH" -maxdepth "$CHECK_DEPTH" -type f \
+    local config_files
+    config_files=$(find "$PROJECT_PATH" -maxdepth "$CHECK_DEPTH" -type f \
         \( -name "*.config.js" -o -name "*.config.json" -o -name "config.yml" -o -name "config.yaml" \) 2>/dev/null | head -5)
     
     if [[ -n "$config_files" ]]; then
@@ -353,7 +355,7 @@ assess_factor_5_build_release_run() {
     fi
 
     # Check for CI/CD configs
-    if ls "$PROJECT_PATH"/.github/workflows/*.yml 2>/dev/null | head -1 | grep -q . || [[ -f "$PROJECT_PATH/.gitlab-ci.yml" ]] || [[ -f "$PROJECT_PATH/Jenkinsfile" ]]; then
+    if find "$PROJECT_PATH/.github/workflows/" -name "*.yml" -type f 2>/dev/null | head -1 | grep -q . || [[ -f "$PROJECT_PATH/.gitlab-ci.yml" ]] || [[ -f "$PROJECT_PATH/Jenkinsfile" ]]; then
         score=$((score + 4))
         details+="✅ CI/CD configuration found\n"
     fi
@@ -486,7 +488,7 @@ assess_factor_8_concurrency() {
     fi
 
     # Check for container orchestration
-    if find "$PROJECT_PATH" -name "*.yaml" -o -name "*.yml" | xargs grep -l "kind: Deployment\|replicas:" 2>/dev/null | grep -q .; then
+    if find "$PROJECT_PATH" \( -name "*.yaml" -o -name "*.yml" \) -print0 2>/dev/null | xargs -0 grep -l "kind: Deployment\|replicas:" 2>/dev/null | grep -q .; then
         score=$((score + 5))
         details+="✅ Kubernetes manifests found\n"
     fi
@@ -808,7 +810,7 @@ EOF
       "max_score": 10,
       "details": "$(echo "${FACTOR_DETAILS[$i]}" | tr -d '\n' | sed 's/"/\\"/g')",
       "remediation": "$(echo "${REMEDIATION_SUGGESTIONS[$i]}" | tr -d '\n' | sed 's/"/\\"/g')"
-    }$([ $i -lt 12 ] && echo ",")
+    }$([ "$i" -lt 12 ] && echo ",")
 EOF
     done
     
@@ -972,7 +974,8 @@ main() {
         echo -e "Project: ${CYAN}$PROJECT_PATH${NC}"
 
         # Detect project type
-        local project_types=($(detect_project_type "$PROJECT_PATH"))
+        local project_types
+        IFS=' ' read -ra project_types <<< "$(detect_project_type "$PROJECT_PATH")"
         if [[ ${#project_types[@]} -gt 0 ]]; then
             echo -e "Detected: ${GREEN}${project_types[*]}${NC}"
         fi

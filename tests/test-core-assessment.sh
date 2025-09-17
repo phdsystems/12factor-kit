@@ -11,8 +11,8 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+# YELLOW='\033[1;33m' # Unused color variable
+# BLUE='\033[0;34m' # Unused color variable
 CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
@@ -528,12 +528,12 @@ test_depth_parameter() {
     echo "password=secret123" > "$project_dir/deep/nested/path/config.js"
     
     # Test with shallow depth
-    local shallow_output
-    shallow_output=$("$TOOL_PATH" "$project_dir" -d 1 2>&1)
+    # local shallow_output  # Unused variable declaration
+    # shallow_output=$("$TOOL_PATH" "$project_dir" -d 1 2>&1) # Unused for depth test
     
     # Test with deep depth
-    local deep_output
-    deep_output=$("$TOOL_PATH" "$project_dir" -d 5 2>&1)
+    # local deep_output  # Unused variable declaration
+    # deep_output=$("$TOOL_PATH" "$project_dir" -d 5 2>&1) # Unused for depth test
     
     # The deep search might find more configuration issues
     pass_test "Depth parameter accepted"
@@ -663,9 +663,11 @@ test_performance() {
         echo "module.exports = {};" > "$project_dir/module$i/index.js"
     done
 
-    local start_time=$(date +%s)
+    local start_time
+    start_time=$(date +%s)
     timeout 10 "$TOOL_PATH" "$project_dir" > /dev/null 2>&1
-    local end_time=$(date +%s)
+    local end_time
+    end_time=$(date +%s)
     local duration=$((end_time - start_time))
 
     if [[ $duration -lt 8 ]]; then

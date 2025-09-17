@@ -11,7 +11,7 @@ set -uo pipefail  # Remove -e to handle exit codes properly
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+# YELLOW='\033[1;33m' # Unused color variable
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -52,7 +52,8 @@ test_empty_directory() {
     local empty_dir="$TEST_TEMP_DIR/empty"
     mkdir -p "$empty_dir"
 
-    local output=$("$TOOL_PATH" "$empty_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$empty_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -77,13 +78,14 @@ test_symlinks() {
     ln -s real/package.json "$project_dir/package.json"
     ln -s nonexistent "$project_dir/broken_link"
 
-    cd "$project_dir"
+    cd "$project_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$project_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$project_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -107,13 +109,14 @@ test_deeply_nested_structure() {
 
     echo '{"name": "deep"}' > "$current/package.json"
 
-    cd "$nested_dir"
+    cd "$nested_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$nested_dir" --depth 5 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$nested_dir" --depth 5 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -136,13 +139,14 @@ test_large_number_of_files() {
 
     echo '{"name": "large"}' > "$large_dir/package.json"
 
-    cd "$large_dir"
+    cd "$large_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$(timeout 10 "$TOOL_PATH" "$large_dir" 2>&1)
+    local output
+    output=$(timeout 10 "$TOOL_PATH" "$large_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -161,13 +165,14 @@ test_special_characters_in_path() {
     mkdir -p "$special_dir"
     echo '{"name": "special"}' > "$special_dir/package.json"
 
-    cd "$special_dir"
+    cd "$special_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$special_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$special_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -189,13 +194,14 @@ test_circular_symlinks() {
 
     echo '{"name": "circular"}' > "$circular_dir/package.json"
 
-    cd "$circular_dir"
+    cd "$circular_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$(timeout 5 "$TOOL_PATH" "$circular_dir" 2>&1)
+    local output
+    output=$(timeout 5 "$TOOL_PATH" "$circular_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -218,13 +224,14 @@ test_mixed_line_endings() {
     printf '#!/bin/bash\n' > "$mixed_dir/script.sh"  # Unix
     printf 'config=value\r' > "$mixed_dir/config.cfg"  # Old Mac
 
-    cd "$mixed_dir"
+    cd "$mixed_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$mixed_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$mixed_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -246,13 +253,14 @@ test_binary_files() {
 
     echo '{"name": "binary"}' > "$binary_dir/package.json"
 
-    cd "$binary_dir"
+    cd "$binary_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$binary_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$binary_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -273,13 +281,14 @@ test_unicode_content() {
     echo '# Здравствуй мир' > "$unicode_dir/README.md"
     echo 'مرحبا بالعالم' > "$unicode_dir/arabic.txt"
 
-    cd "$unicode_dir"
+    cd "$unicode_dir" || return
     git init -q
     git config user.name "测试用户"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$unicode_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$unicode_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -300,13 +309,14 @@ test_permission_issues() {
     echo "secret" > "$perm_dir/restricted.txt"
     chmod 000 "$perm_dir/restricted.txt"
 
-    cd "$perm_dir"
+    cd "$perm_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$perm_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$perm_dir" 2>&1)
     local exit_code=$?
 
     # Restore permissions for cleanup
@@ -326,7 +336,7 @@ test_git_submodules() {
     mkdir -p "$submodule_dir"
     echo '{"name": "main"}' > "$submodule_dir/package.json"
 
-    cd "$submodule_dir"
+    cd "$submodule_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
@@ -337,9 +347,10 @@ test_git_submodules() {
     echo '    path = sub' >> .gitmodules
     echo '    url = https://github.com/example/sub.git' >> .gitmodules
 
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$submodule_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$submodule_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -369,15 +380,16 @@ EOF
     # Lerna config
     echo '{"version": "1.0.0"}' > "$monorepo_dir/lerna.json"
 
-    cd "$monorepo_dir"
+    cd "$monorepo_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
     git commit -q -m "Initial"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$monorepo_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$monorepo_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -406,13 +418,14 @@ test_concurrent_docker_compose() {
     echo 'version: "3"' > "$compose_dir/docker-compose.prod.yml"
     echo 'version: "3"' > "$compose_dir/docker-compose.override.yml"
 
-    cd "$compose_dir"
+    cd "$compose_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$compose_dir" 2>&1)
+    local output
+    output=$("$TOOL_PATH" "$compose_dir" 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -463,17 +476,19 @@ EOF
     echo 'const winston = require("winston");' > "$perfect_dir/logger.js"
     echo "CREATE TABLE users;" > "$perfect_dir/migrations/001.sql"
 
-    cd "$perfect_dir"
+    cd "$perfect_dir" || return
     git init -q
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
     git commit -q -m "Initial"
     git remote add origin https://github.com/test/repo.git
-    cd - >/dev/null
+    cd - >/dev/null || return
 
-    local output=$("$TOOL_PATH" "$perfect_dir" -f json 2>&1)
-    local score=$(echo "$output" | grep -o '"totalScore":[0-9]*' | cut -d: -f2)
+    local output
+    output=$("$TOOL_PATH" "$perfect_dir" -f json 2>&1)
+    local score
+    score=$(echo "$output" | grep -o '"totalScore":[0-9]*' | cut -d: -f2)
 
     if [[ -n "$score" ]] && [[ $score -gt 100 ]]; then
         pass_test "High compliance score calculated correctly (score: $score)"
@@ -486,8 +501,10 @@ EOF
     mkdir -p "$zero_dir"
     touch "$zero_dir/file.txt"
 
-    local output=$("$TOOL_PATH" "$zero_dir" -f json 2>&1)
-    local score=$(echo "$output" | grep -o '"totalScore":[0-9]*' | cut -d: -f2)
+    local output
+    output=$("$TOOL_PATH" "$zero_dir" -f json 2>&1)
+    local score
+    score=$(echo "$output" | grep -o '"totalScore":[0-9]*' | cut -d: -f2)
 
     if [[ -n "$score" ]]; then
         pass_test "Low compliance score calculated correctly"

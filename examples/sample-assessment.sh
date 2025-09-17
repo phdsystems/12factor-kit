@@ -19,8 +19,10 @@ mkdir -p "$OUTPUT_DIR"
 # Function to assess a project
 assess_project() {
     local project_path="$1"
-    local project_name=$(basename "$project_path")
-    local timestamp=$(date +%Y%m%d_%H%M%S)
+    local project_name
+    project_name=$(basename "$project_path")
+    local timestamp
+    timestamp=$(date +%Y%m%d_%H%M%S)
     
     echo "Assessing project: $project_name"
     
