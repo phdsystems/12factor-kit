@@ -22,7 +22,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 COVERAGE_DIR="$PROJECT_ROOT/coverage"
 TOOL_PATH="$PROJECT_ROOT/bin/12factor-assess"
-TEST_SCRIPT="$PROJECT_ROOT/tests/test_12factor_assessment.sh"
+TEST_SCRIPT="$PROJECT_ROOT/tests/test-core-assessment.sh"
 
 # Cleanup previous coverage
 rm -rf "$COVERAGE_DIR"

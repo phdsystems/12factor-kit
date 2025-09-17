@@ -8,21 +8,32 @@ The 12-Factor Assessment Tool is designed as a modular, extensible system for ev
 
 ```
 12factor-assess/
-├── src/                    # Source code
-│   ├── 12factor-assess.sh  # Main assessment engine
-│   └── lib/               # Shared libraries
-│       ├── colors.sh      # Color definitions and output formatting
-│       └── utils.sh       # Utility functions
-├── bin/                   # Executable wrappers
-│   └── 12factor-assess    # CLI entry point
-├── tests/                 # Test suite
-│   └── test_12factor_assessment.sh
+├── src/                           # Source code
+│   ├── twelve-factor-assessment.sh  # Main assessment engine
+│   └── lib/                      # Shared libraries
+│       ├── colors.sh            # Color definitions and output formatting
+│       └── utils.sh             # Utility functions
+├── bin/                          # Executable wrappers
+│   └── 12factor-assess          # CLI entry point
+├── tests/                        # Test suite
+│   ├── test-core-assessment.sh  # Main test suite
+│   ├── test-input-validation.sh # Input validation tests
+│   ├── test-edge-cases.sh       # Edge case tests
+│   ├── test-error-handling.sh   # Error handling tests
+│   ├── test-quick-validation.sh # Quick validation tests
+│   └── run-comprehensive-tests.sh # Complete test runner
 ├── docs/                  # Documentation
 │   ├── ARCHITECTURE.md    # This file
 │   ├── CONTRIBUTING.md    # Contribution guidelines
 │   └── API.md            # API documentation
 ├── config/               # Configuration files
-├── scripts/              # Helper scripts
+├── scripts/                     # Helper scripts
+│   ├── batch-assessment.sh      # Batch processing
+│   ├── coverage-analysis.sh     # Coverage analysis (kcov)
+│   ├── coverage-analysis-bashcov.sh  # Coverage analysis (bashcov)
+│   ├── coverage-analysis-simple.sh   # Simple coverage analysis
+│   ├── coverage-summary.sh      # Coverage report display
+│   └── test-runner.sh           # Test execution
 ├── examples/             # Usage examples
 └── lib/                  # External libraries
 
@@ -30,7 +41,7 @@ The 12-Factor Assessment Tool is designed as a modular, extensible system for ev
 
 ## Components
 
-### 1. Core Assessment Engine (`src/12factor-assess.sh`)
+### 1. Core Assessment Engine (`src/twelve-factor-assessment.sh`)
 
 The main assessment logic that:
 - Analyzes project structure

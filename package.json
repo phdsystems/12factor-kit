@@ -4,7 +4,7 @@
   "description": "Comprehensive language-agnostic 12-Factor App compliance review and assessment tool",
   "main": "bin/12factor-assess",
   "scripts": {
-    "test": "./tests/test_12factor_assessment.sh",
+    "test": "./tests/test-core-assessment.sh",
     "install": "./install.sh --local",
     "uninstall": "./install.sh --uninstall --local",
     "assess": "./bin/12factor-assess",

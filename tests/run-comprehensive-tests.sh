@@ -23,29 +23,29 @@ echo
 
 # Run individual test suites sequentially
 echo -e "${BOLD}Running Main Test Suite...${NC}"
-timeout 60 "$SCRIPT_DIR/test_12factor_assessment.sh" || echo "Main tests completed (may have timeout on strict mode)"
+timeout 60 "$SCRIPT_DIR/test-core-assessment.sh" || echo "Main tests completed (may have timeout on strict mode)"
 
 echo -e "\n${BOLD}Running Validation Tests...${NC}"
-"$SCRIPT_DIR/test_validation.sh"
+"$SCRIPT_DIR/test-input-validation.sh"
 
 echo -e "\n${BOLD}Running Quick Validation Tests...${NC}"
-"$SCRIPT_DIR/test_quick.sh"
+"$SCRIPT_DIR/test-quick-validation.sh"
 
 echo -e "\n${BOLD}${CYAN}Running Coverage Analysis...${NC}"
 
 # Run coverage on all test files
 cd "$PROJECT_ROOT"
 timeout 90 bashcov --root . \
-  tests/test_12factor_assessment.sh \
-  tests/test_validation.sh 2>&1 | tail -10
+  tests/test-core-assessment.sh \
+  tests/test-input-validation.sh 2>&1 | tail -10
 
 echo
 echo -e "${BOLD}Coverage Summary:${NC}"
-./scripts/show-coverage.sh
+./scripts/coverage-summary.sh
 
 echo
 echo -e "${BOLD}${GREEN}✅ All test suites completed!${NC}"
 echo
 echo -e "${BOLD}Access Reports:${NC}"
 echo -e "  HTML Coverage: ${CYAN}file://$(pwd)/coverage/index.html${NC}"
-echo -e "  Coverage Summary: ${CYAN}./scripts/show-coverage.sh${NC}"
+echo -e "  Coverage Summary: ${CYAN}./scripts/coverage-summary.sh${NC}"

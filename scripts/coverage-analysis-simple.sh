@@ -25,7 +25,7 @@ mkdir -p "$COVERAGE_DIR"
 # Run tests and capture which lines are executed
 echo -e "${CYAN}Running tests with trace...${NC}"
 BASH_XTRACEFD=3 PS4='+ ${BASH_SOURCE}:${LINENO}: ' \
-  bash -x tests/test_12factor_assessment.sh 3> "$COVERAGE_DIR/trace.log" 2>&1 | tail -5
+  bash -x tests/test-core-assessment.sh 3> "$COVERAGE_DIR/trace.log" 2>&1 | tail -5
 
 # Analyze coverage
 echo

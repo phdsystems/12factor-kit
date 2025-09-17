@@ -11,7 +11,7 @@ set -euo pipefail
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="${SCRIPT_DIR}/.."
-TEST_SCRIPT="${PROJECT_ROOT}/tests/test_12factor_assessment.sh"
+TEST_SCRIPT="${PROJECT_ROOT}/tests/test-core-assessment.sh"
 
 # Colors
 GREEN='\033[0;32m'

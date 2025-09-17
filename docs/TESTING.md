@@ -114,13 +114,13 @@ The 12-Factor Reviewer includes a comprehensive test suite with **46+ unit tests
 #### Running Coverage:
 ```bash
 # Generate coverage report
-bashcov --root . tests/test_12factor_assessment.sh
+bashcov --root . tests/test-core-assessment.sh
 
 # Or use our wrapper script
-./scripts/coverage-bashcov.sh
+./scripts/coverage-analysis-bashcov.sh
 
 # View coverage summary
-./scripts/show-coverage.sh
+./scripts/coverage-summary.sh
 ```
 
 The HTML report is generated at `coverage/index.html` with detailed line-by-line coverage.

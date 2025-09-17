@@ -14,7 +14,16 @@ total_lines=0
 covered_lines=0
 
 while IFS= read -r file; do
-    coverage_data=$(jq -r ".[\"/bin/bash tests/test_12factor_assessment.sh\"].coverage[\"$file\"]" coverage/.resultset.json)
+    # Try different test file patterns to find the coverage data
+    coverage_data=""
+    for key in $(jq -r 'keys[]' coverage/.resultset.json); do
+        if [[ "$key" == *"test"* ]]; then
+            coverage_data=$(jq -r ".\"$key\".coverage[\"$file\"]" coverage/.resultset.json 2>/dev/null)
+            if [[ "$coverage_data" != "null" ]]; then
+                break
+            fi
+        fi
+    done
     
     # Count non-null entries (covered lines) and total entries
     file_total=$(echo "$coverage_data" | jq 'length')
@@ -32,7 +41,15 @@ while IFS= read -r file; do
     # Extract just the filename
     basename_file=$(basename "$file")
     printf "%-30s %4d/%4d lines (%3d%%)\n" "$basename_file:" "$file_covered" "$file_total" "$file_percent"
-done < <(jq -r '."/bin/bash tests/test_12factor_assessment.sh".coverage | keys[]' coverage/.resultset.json)
+done < <(
+    # Get file list from the first test run found in coverage data
+    for key in $(jq -r 'keys[]' coverage/.resultset.json); do
+        if [[ "$key" == *"test"* ]]; then
+            jq -r ".\"$key\".coverage | keys[]" coverage/.resultset.json 2>/dev/null
+            break
+        fi
+    done
+)
 
 echo "----------------------------------------"
 if [[ $total_lines -gt 0 ]]; then

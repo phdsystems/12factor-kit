@@ -56,11 +56,11 @@ assess-md:
 # Testing targets
 test:
 	@echo "Running test suite..."
-	@./tests/test_12factor_assessment.sh
+	@./tests/test-core-assessment.sh
 
 test-verbose:
 	@echo "Running test suite with verbose output..."
-	@VERBOSE=true ./tests/test_12factor_assessment.sh
+	@VERBOSE=true ./tests/test-core-assessment.sh
 
 # Docker targets
 docker-build:
@@ -81,9 +81,9 @@ clean:
 check:
 	@echo "Checking tool integrity..."
 	@test -f bin/12factor-assess.sh || (echo "Error: Main script not found" && exit 1)
-	@test -f tests/test_12factor_assessment.sh || (echo "Error: Test script not found" && exit 1)
+	@test -f tests/test-core-assessment.sh || (echo "Error: Test script not found" && exit 1)
 	@test -x bin/12factor-assess.sh || (echo "Error: Main script not executable" && exit 1)
-	@test -x tests/test_12factor_assessment.sh || (echo "Error: Test script not executable" && exit 1)
+	@test -x tests/test-core-assessment.sh || (echo "Error: Test script not executable" && exit 1)
 	@echo "✓ Tool integrity check passed"
 
 # Project-specific assessments
@@ -99,4 +99,4 @@ ci: check test
 
 ci-strict: check
 	@./bin/12factor-assess.sh . --strict
-	@./tests/test_12factor_assessment.sh
+	@./tests/test-core-assessment.sh
