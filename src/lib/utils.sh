@@ -6,6 +6,8 @@
 # Common utility functions used throughout the assessment tool
 # ==============================================================================
 
+set -euo pipefail
+
 # Check if a command exists
 command_exists() {
     command -v "$1" &> /dev/null
