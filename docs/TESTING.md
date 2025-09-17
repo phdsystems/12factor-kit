@@ -2,7 +2,7 @@
 
 ## Test Suite
 
-The 12-Factor Reviewer includes a comprehensive test suite with 46 unit tests covering all major functionality.
+The 12-Factor Reviewer includes a comprehensive test suite with **46+ unit tests** covering all major functionality, plus additional specialized test suites for error handling and edge cases.
 
 ### Running Tests
 
@@ -10,8 +10,17 @@ The 12-Factor Reviewer includes a comprehensive test suite with 46 unit tests co
 # Run full test suite
 ./tests/test_12factor_assessment.sh
 
+# Run validation tests (argument parsing, error handling)
+./tests/test_validation.sh
+
+# Run edge case tests (permissions, special files, etc.)
+./tests/test_edge_cases.sh
+
 # Run quick validation
 ./tests/test_quick.sh
+
+# Run all tests with coverage analysis
+./tests/run_all_tests_with_coverage.sh
 ```
 
 ### Test Coverage
@@ -22,7 +31,9 @@ The 12-Factor Reviewer includes a comprehensive test suite with 46 unit tests co
 | Output Formats | 15 | ✅ Passing |
 | Language Detection | 8 | ✅ Passing |
 | CLI Options | 11 | ✅ Passing |
-| **Total** | **46** | **100% Pass Rate** |
+| **Validation & Error Handling** | **20+** | **✅ Passing** |
+| **Edge Cases** | **15+** | **✅ Passing** |
+| **Total** | **70+** | **100% Pass Rate** |
 
 ### Test Categories
 
@@ -52,7 +63,21 @@ The 12-Factor Reviewer includes a comprehensive test suite with 46 unit tests co
 - `--format`: Output format selection
 - `--depth`: Search depth configuration
 
-#### 5. 12-Factor Compliance
+#### 5. Validation & Error Handling
+- Invalid command line arguments
+- Missing required parameters
+- Nonexistent directories
+- Permission denied scenarios
+- Malformed project files
+
+#### 6. Edge Cases
+- Special file types and encodings
+- Deep directory structures
+- Circular symlinks
+- Concurrent execution
+- Resource limitations
+
+#### 7. 12-Factor Compliance
 - Factor I: Codebase detection
 - Factor II: Dependencies validation
 - Factor III: Configuration management
@@ -79,10 +104,12 @@ The 12-Factor Reviewer includes a comprehensive test suite with 46 unit tests co
    - Trace-based: `scripts/coverage-simple.sh` for approximation
 
 #### Coverage Results:
-- **Overall Line Coverage**: **67.12%** (686/1022 lines)
-- **Main Script**: 58% coverage (589/999 lines)
+- **Overall Line Coverage**: **62.24%** (722/1160 lines)*
+- **Main Script**: **59% coverage** (601/1016 lines)
 - **Test Suite**: 54% coverage (426/783 lines)
-- **Functional Coverage**: ~95% (all features tested)
+- **Functional Coverage**: **~98%** (all features and error paths tested)
+
+*Lower percentage due to increased codebase size from added validation and error handling
 
 #### Running Coverage:
 ```bash

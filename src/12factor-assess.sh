@@ -915,10 +915,27 @@ main() {
                 shift
                 ;;
             -f|--format)
+                if [[ -z "${2:-}" ]]; then
+                    echo -e "${RED}Error: --format requires an argument${NC}"
+                    exit 1
+                fi
                 REPORT_FORMAT="$2"
+                # Validate format
+                if [[ ! "$REPORT_FORMAT" =~ ^(terminal|json|markdown)$ ]]; then
+                    echo -e "${YELLOW}Warning: Unknown format '$REPORT_FORMAT', using terminal${NC}" >&2
+                    REPORT_FORMAT="terminal"
+                fi
                 shift 2
                 ;;
             -d|--depth)
+                if [[ -z "${2:-}" ]]; then
+                    echo -e "${RED}Error: --depth requires an argument${NC}"
+                    exit 1
+                fi
+                if [[ ! "$2" =~ ^[0-9]+$ ]] || [[ "$2" -lt 1 ]]; then
+                    echo -e "${RED}Error: --depth must be a positive integer${NC}"
+                    exit 1
+                fi
                 CHECK_DEPTH="$2"
                 shift 2
                 ;;
@@ -944,7 +961,10 @@ main() {
     fi
     
     # Convert to absolute path
-    PROJECT_PATH=$(cd "$PROJECT_PATH" && pwd)
+    if ! PROJECT_PATH=$(cd "$PROJECT_PATH" && pwd 2>/dev/null); then
+        echo -e "${RED}Error: Cannot access project path '$PROJECT_PATH'${NC}"
+        exit 1
+    fi
     
     if [[ "$REPORT_FORMAT" == "terminal" ]]; then
         echo -e "${BOLD}12-Factor App Compliance Assessment${NC}"
