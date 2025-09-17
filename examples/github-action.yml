@@ -1,0 +1,131 @@
+name: 12-Factor Compliance Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run weekly on Mondays at 9 AM UTC
+    - cron: '0 9 * * 1'
+
+jobs:
+  compliance-check:
+    name: Check 12-Factor Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install 12-Factor Reviewer
+        run: |
+          git clone https://github.com/phdsystems/12-factor-reviewer.git /tmp/12factor
+          chmod +x /tmp/12factor/bin/twelve-factor-reviewer
+
+      - name: Run 12-Factor Assessment
+        id: assessment
+        run: |
+          # Run assessment and save outputs
+          /tmp/12factor/bin/twelve-factor-reviewer . -f json > compliance.json
+
+          # Extract key metrics
+          score=$(jq '.total_score' compliance.json)
+          percentage=$(jq '.percentage' compliance.json)
+          grade=$(jq -r '.grade' compliance.json)
+
+          # Set outputs
+          echo "score=$score" >> $GITHUB_OUTPUT
+          echo "percentage=$percentage" >> $GITHUB_OUTPUT
+          echo "grade=$grade" >> $GITHUB_OUTPUT
+
+          # Create summary
+          echo "## 12-Factor Compliance Report 📊" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Score:** $score/120 ($percentage%)" >> $GITHUB_STEP_SUMMARY
+          echo "**Grade:** $grade" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Add factor breakdown to summary
+          echo "### Factor Scores" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          jq -r '.factors[] | "\(.number). \(.name): \(.score)/\(.max_score)"' compliance.json >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Generate Markdown Report
+        run: |
+          /tmp/12factor/bin/twelve-factor-reviewer . -f markdown > compliance-report.md
+
+      - name: Upload Compliance Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: compliance-reports
+          path: |
+            compliance.json
+            compliance-report.md
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const score = ${{ steps.assessment.outputs.score }};
+            const percentage = ${{ steps.assessment.outputs.percentage }};
+            const grade = '${{ steps.assessment.outputs.grade }}';
+
+            // Determine emoji based on grade
+            let emoji = '✅';
+            if (grade === 'F') emoji = '❌';
+            else if (grade === 'D' || grade === 'C') emoji = '⚠️';
+
+            // Create comment
+            const body = `## ${emoji} 12-Factor Compliance Report
+
+            **Score:** ${score}/120 (${percentage}%)
+            **Grade:** ${grade}
+
+            View the full report in the [workflow artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+
+            To run locally: \`twelve-factor-reviewer . --verbose\``;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Enforce Compliance (Strict Mode)
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          # Fail if compliance is below 80% for PRs to main
+          percentage=${{ steps.assessment.outputs.percentage }}
+          if [ "$percentage" -lt 80 ]; then
+            echo "❌ 12-Factor compliance is below 80% ($percentage%)"
+            echo "Please address the compliance issues before merging to main."
+            exit 1
+          fi
+          echo "✅ 12-Factor compliance check passed ($percentage%)"
+
+      - name: Create Issue for Low Compliance
+        if: github.event_name == 'schedule' && steps.assessment.outputs.percentage < 70
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const percentage = ${{ steps.assessment.outputs.percentage }};
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `⚠️ 12-Factor Compliance Below 70% (${percentage}%)`,
+              body: `The weekly 12-Factor compliance check found that the project is at ${percentage}% compliance, which is below the recommended 70% threshold.
+
+              Please review the [latest compliance report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) and address the identified issues.
+
+              To run the assessment locally:
+              \`\`\`bash
+              twelve-factor-reviewer . --verbose --remediate
+              \`\`\``,
+              labels: ['tech-debt', '12-factor', 'compliance']
+            });

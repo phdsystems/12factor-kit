@@ -1,0 +1,230 @@
+{
+  "timestamp": "2024-01-17T10:30:45Z",
+  "project_path": "/home/user/my-nodejs-app",
+  "detected_stack": ["node", "git", "docker", "kubernetes"],
+  "total_score": 95,
+  "max_score": 120,
+  "percentage": 79,
+  "grade": "A",
+  "factors": [
+    {
+      "number": 1,
+      "name": "Codebase",
+      "description": "One codebase tracked in revision control, many deploys",
+      "score": 10,
+      "max_score": 10,
+      "status": "excellent",
+      "details": [
+        "✅ Git repository found",
+        "✅ Single codebase confirmed",
+        "✅ Remote origin configured"
+      ],
+      "remediation": []
+    },
+    {
+      "number": 2,
+      "name": "Dependencies",
+      "description": "Explicitly declare and isolate dependencies",
+      "score": 9,
+      "max_score": 10,
+      "status": "excellent",
+      "details": [
+        "✅ package.json found (Node.js)",
+        "✅ package-lock.json present",
+        "⚠️  Some devDependencies mixed with dependencies"
+      ],
+      "remediation": [
+        "Review and separate development dependencies"
+      ]
+    },
+    {
+      "number": 3,
+      "name": "Config",
+      "description": "Store config in the environment",
+      "score": 7,
+      "max_score": 10,
+      "status": "good",
+      "details": [
+        "✅ Environment variables used",
+        "✅ .env.example file present",
+        "❌ Hardcoded database credentials found"
+      ],
+      "remediation": [
+        "Move database credentials to environment variables",
+        "Use a secrets management service for production"
+      ]
+    },
+    {
+      "number": 4,
+      "name": "Backing Services",
+      "description": "Treat backing services as attached resources",
+      "score": 6,
+      "max_score": 10,
+      "status": "fair",
+      "details": [
+        "✅ Database connection string in environment",
+        "⚠️  No connection pooling detected",
+        "❌ Missing circuit breakers for external services"
+      ],
+      "remediation": [
+        "Implement connection pooling",
+        "Add circuit breakers for resilience",
+        "Use service discovery for microservices"
+      ]
+    },
+    {
+      "number": 5,
+      "name": "Build, Release, Run",
+      "description": "Strictly separate build and run stages",
+      "score": 9,
+      "max_score": 10,
+      "status": "excellent",
+      "details": [
+        "✅ Dockerfile with multi-stage build",
+        "✅ CI/CD pipeline configured",
+        "✅ Separate build and runtime containers"
+      ],
+      "remediation": [
+        "Consider implementing semantic versioning"
+      ]
+    },
+    {
+      "number": 6,
+      "name": "Processes",
+      "description": "Execute the app as one or more stateless processes",
+      "score": 10,
+      "max_score": 10,
+      "status": "excellent",
+      "details": [
+        "✅ No local state storage detected",
+        "✅ Session storage externalized",
+        "✅ Stateless application design"
+      ],
+      "remediation": []
+    },
+    {
+      "number": 7,
+      "name": "Port Binding",
+      "description": "Export services via port binding",
+      "score": 8,
+      "max_score": 10,
+      "status": "good",
+      "details": [
+        "✅ PORT environment variable used",
+        "✅ Self-contained web server",
+        "⚠️  Health check endpoint could be improved"
+      ],
+      "remediation": [
+        "Implement comprehensive health check endpoint",
+        "Add readiness and liveness probes"
+      ]
+    },
+    {
+      "number": 8,
+      "name": "Concurrency",
+      "description": "Scale out via the process model",
+      "score": 8,
+      "max_score": 10,
+      "status": "good",
+      "details": [
+        "✅ Kubernetes deployment configured",
+        "✅ Horizontal pod autoscaling",
+        "⚠️  Worker processes not fully utilized"
+      ],
+      "remediation": [
+        "Implement worker process pool",
+        "Consider using PM2 or similar for process management"
+      ]
+    },
+    {
+      "number": 9,
+      "name": "Disposability",
+      "description": "Maximize robustness with fast startup and graceful shutdown",
+      "score": 7,
+      "max_score": 10,
+      "status": "good",
+      "details": [
+        "✅ SIGTERM handler implemented",
+        "✅ Fast startup time (<3s)",
+        "❌ Missing graceful connection draining"
+      ],
+      "remediation": [
+        "Implement graceful shutdown for database connections",
+        "Add connection draining logic",
+        "Reduce startup time further"
+      ]
+    },
+    {
+      "number": 10,
+      "name": "Dev/Prod Parity",
+      "description": "Keep development, staging, and production as similar as possible",
+      "score": 6,
+      "max_score": 10,
+      "status": "fair",
+      "details": [
+        "✅ Docker used in all environments",
+        "❌ Different database versions",
+        "⚠️  No feature flags system"
+      ],
+      "remediation": [
+        "Use same database version across environments",
+        "Implement feature flags for controlled rollouts",
+        "Use infrastructure as code"
+      ]
+    },
+    {
+      "number": 11,
+      "name": "Logs",
+      "description": "Treat logs as event streams",
+      "score": 8,
+      "max_score": 10,
+      "status": "good",
+      "details": [
+        "✅ Logs written to stdout/stderr",
+        "✅ Structured logging (JSON)",
+        "⚠️  Missing correlation IDs"
+      ],
+      "remediation": [
+        "Add correlation IDs for request tracing",
+        "Implement centralized log aggregation"
+      ]
+    },
+    {
+      "number": 12,
+      "name": "Admin Processes",
+      "description": "Run admin/management tasks as one-off processes",
+      "score": 7,
+      "max_score": 10,
+      "status": "good",
+      "details": [
+        "✅ Database migrations present",
+        "✅ One-off tasks via npm scripts",
+        "⚠️  No automated backup processes"
+      ],
+      "remediation": [
+        "Implement automated database backup",
+        "Create administrative dashboard",
+        "Document all admin processes"
+      ]
+    }
+  ],
+  "summary": {
+    "strengths": [
+      "Excellent codebase management with Git",
+      "Strong stateless process architecture",
+      "Well-configured build pipeline",
+      "Good containerization with Docker and Kubernetes"
+    ],
+    "weaknesses": [
+      "Configuration management needs improvement",
+      "Backing services lack resilience patterns",
+      "Dev/prod parity could be better"
+    ],
+    "recommendations": [
+      "Implement comprehensive secret management",
+      "Add circuit breakers and connection pooling",
+      "Achieve full dev/prod parity",
+      "Enhance monitoring and observability"
+    ]
+  }
+}

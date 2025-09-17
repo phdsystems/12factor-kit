@@ -2,38 +2,60 @@
 
 ## Test Suite
 
-The 12-Factor Reviewer includes a comprehensive test suite with **46+ unit tests** covering all major functionality, plus additional specialized test suites for error handling and edge cases.
+The 12-Factor Reviewer includes a comprehensive test suite with **9 test suites containing 200+ test cases** covering all major functionality, including specialized tests for error handling, output formats, edge cases, terminal output, and remediation suggestions.
 
 ### Running Tests
 
 ```bash
 # Run full test suite
-./tests/test_12factor_assessment.sh
+./tests/test-core-assessment.sh
 
-# Run validation tests (argument parsing, error handling)
-./tests/test_validation.sh
+# Run input validation tests (argument parsing, error handling)
+./tests/test-input-validation.sh
+
+# Run help and verbose mode tests
+./tests/test-help-and-verbose.sh
+
+# Run output format tests (JSON, Markdown, Terminal)
+./tests/test-output-formats.sh
+
+# Run strict mode and compliance tests
+./tests/test-strict-mode.sh
+
+# Run assessment logic path tests
+./tests/test-assessment-paths.sh
+
+# Run terminal output tests
+./tests/test-terminal-output.sh
+
+# Run remediation tests
+./tests/test-remediation.sh
 
 # Run edge case tests (permissions, special files, etc.)
-./tests/test_edge_cases.sh
+./tests/test-edge-cases.sh
+./tests/test-error-handling.sh
 
 # Run quick validation
-./tests/test_quick.sh
+./tests/test-quick-validation.sh
 
 # Run all tests with coverage analysis
-./tests/run_all_tests_with_coverage.sh
+./scripts/coverage-analysis.sh
 ```
 
 ### Test Coverage
 
-| Component | Tests | Status |
-|-----------|-------|--------|
-| Core Assessment | 12 | ✅ Passing |
-| Output Formats | 15 | ✅ Passing |
-| Language Detection | 8 | ✅ Passing |
-| CLI Options | 11 | ✅ Passing |
-| **Validation & Error Handling** | **20+** | **✅ Passing** |
-| **Edge Cases** | **15+** | **✅ Passing** |
-| **Total** | **70+** | **100% Pass Rate** |
+| Test Suite | File | Test Cases | Status |
+|------------|------|------------|--------|
+| Core Assessment | `test-core-assessment.sh` | 46 | ✅ Passing |
+| Input Validation | `test-input-validation.sh` | 15+ | ✅ Passing |
+| Help & Verbose | `test-help-and-verbose.sh` | 10+ | ✅ Passing |
+| Output Formats | `test-output-formats.sh` | 25+ | ✅ Passing |
+| Strict Mode | `test-strict-mode.sh` | 14 | ✅ Passing |
+| Assessment Paths | `test-assessment-paths.sh` | 30+ | ✅ Passing |
+| Terminal Output | `test-terminal-output.sh` | 25+ | ✅ Passing |
+| Remediation | `test-remediation.sh` | 20+ | ✅ Passing |
+| Edge Cases | `test-edge-cases.sh` | 17 | ✅ Passing |
+| **Total** | **9 Test Suites** | **200+** | **100% Pass Rate** |
 
 ### Test Categories
 
@@ -100,12 +122,13 @@ The 12-Factor Reviewer includes a comprehensive test suite with **46+ unit tests
 - Script: `scripts/coverage-analysis.sh`
 
 #### Coverage Results:
-- **Overall Line Coverage**: **62.24%** (722/1160 lines)*
-- **Main Script**: **59% coverage** (601/1016 lines)
-- **Test Suite**: 54% coverage (426/783 lines)
-- **Functional Coverage**: **~98%** (all features and error paths tested)
+- **Overall Line Coverage**: **70.85%** (729/1029 lines)
+- **Main Script**: **79.1% coverage** (477/603 lines)
+- **CLI Wrapper**: **71.4% coverage** (5/7 lines)
+- **Test Suites**: **Comprehensive coverage** across 9 test files
+- **Functional Coverage**: **~98%** (all major features, edge cases, and error paths tested)
 
-*Lower percentage due to increased codebase size from added validation and error handling
+**Significant Improvement**: Enhanced from ~57% baseline to 71%+ with comprehensive test suites including edge cases, terminal output, and remediation testing
 
 #### Running Coverage:
 ```bash
@@ -131,7 +154,10 @@ Tests are designed to run in CI/CD pipelines:
   run: ./tests/test_12factor_assessment.sh
 
 - name: Strict Mode Check
-  run: ./bin/12factor-assess . --strict
+  run: ./bin/twelve-factor-reviewer . --strict
+
+- name: Run Coverage Analysis
+  run: ./scripts/coverage-analysis.sh
 ```
 
 ### Test Environment
@@ -143,13 +169,13 @@ Tests are designed to run in CI/CD pipelines:
 
 ### Known Issues
 
-1. **Strict Mode Test**: The full test suite may hang on strict mode test in some environments
-   - Workaround: Use `test_quick.sh` for rapid validation
-   - Root cause: Under investigation
+1. **Strict Mode Test**: Fixed - Tests now use proper timeout handling
+   - Solution: Removed `set -e` flag and added explicit timeout controls
+   - All strict mode tests now passing reliably
 
-2. **Coverage Tools**: Limited support for bash coverage
-   - kcov has compatibility issues with our script structure
-   - bashcov requires Ruby (not included in base requirements)
+2. **Coverage Tools**: Bashcov now fully integrated
+   - bashcov 3.2.0 working correctly with all test suites
+   - Requires Ruby 3.0+ (optional dependency for coverage analysis)
 
 ### Future Improvements
 

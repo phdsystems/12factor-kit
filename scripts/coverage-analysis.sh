@@ -29,6 +29,9 @@ TEST_SCRIPTS=(
     "tests/test-output-formats.sh"
     "tests/test-strict-mode.sh"
     "tests/test-assessment-paths.sh"
+    "tests/test-terminal-output.sh"
+    "tests/test-remediation.sh"
+    "tests/test-edge-cases.sh"
 )
 
 # Cleanup previous coverage

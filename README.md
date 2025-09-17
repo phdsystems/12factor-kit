@@ -4,7 +4,8 @@ A comprehensive, language-agnostic tool for reviewing and assessing 12-Factor Ap
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Bash 5.0+](https://img.shields.io/badge/bash-5.0%2B-blue)](https://www.gnu.org/software/bash/)
-[![Tests Passing](https://img.shields.io/badge/tests-46%20passing-brightgreen)](./tests)
+[![Tests Passing](https://img.shields.io/badge/tests-9%20suites%20passing-brightgreen)](./tests)
+[![Coverage](https://img.shields.io/badge/coverage-71%25-yellow)](./coverage)
 
 ## 🎯 Overview
 
@@ -22,15 +23,17 @@ The 12-Factor Reviewer evaluates your project against the [12-Factor App](https:
 # Clone and run
 git clone https://github.com/phdsystems/12-factor-reviewer.git
 cd 12-factor-reviewer
-./bin/12factor-assess /path/to/project
+./bin/twelve-factor-reviewer /path/to/project
 ```
 
 ## 📖 Documentation
 
 | Document | Description |
 |----------|-------------|
+| [Quick Reference](docs/QUICK-REFERENCE.md) | **⚡ Start here** - Commands cheat sheet |
 | [Installation Guide](docs/INSTALLATION.md) | Multiple installation methods |
 | [Usage Guide](docs/USAGE.md) | Commands, options, and examples |
+| [FAQ](docs/FAQ.md) | Frequently asked questions |
 | [CI/CD Integration](docs/CI-CD-INTEGRATION.md) | GitHub Actions, GitLab, Jenkins setup |
 | [Tech Stack](docs/TECH-STACK.md) | Technologies and requirements |
 | [API Reference](docs/API.md) | Detailed API documentation |
@@ -45,7 +48,8 @@ cd 12-factor-reviewer
 - ✅ Provides remediation suggestions
 - ✅ Integrates with CI/CD pipelines
 - ✅ Docker support included
-- ✅ Comprehensive test suite (46 tests, 100% passing)
+- ✅ Comprehensive test suite (9 test suites, 71% coverage)
+- ✅ Code coverage analysis with bashcov
 
 ## 📊 The 12 Factors
 
@@ -66,13 +70,19 @@ cd 12-factor-reviewer
 
 ```bash
 # Assess current directory
-12factor-assess
+twelve-factor-reviewer
 
 # Generate JSON report
-12factor-assess . -f json > report.json
+twelve-factor-reviewer . -f json > report.json
+
+# Generate Markdown report
+twelve-factor-reviewer . -f markdown > report.md
 
 # CI/CD mode (fail if <80% compliance)
-12factor-assess . --strict
+twelve-factor-reviewer . --strict
+
+# Verbose output with remediation
+twelve-factor-reviewer . --verbose --remediate
 ```
 
 See [Usage Guide](docs/USAGE.md) for more examples.
@@ -93,13 +103,24 @@ Contributions welcome! Please see our [Contributing Guide](docs/CONTRIBUTING.md)
 
 MIT License - See [LICENSE](LICENSE) file for details.
 
+## 📁 Examples
+
+Check out the [examples](examples/) directory for:
+- Sample terminal output
+- JSON report structure
+- Markdown report format
+- GitHub Actions workflow
+- CI/CD integration examples
+
 ## 🙏 Acknowledgments
 
 - Based on the [12-Factor App](https://12factor.net/) methodology by Heroku
 - Originally developed as part of the PHD-ADE project
+- Test coverage powered by [bashcov](https://github.com/infertux/bashcov)
 
 ## 📞 Support
 
 - 🐛 [Report Issues](https://github.com/phdsystems/12-factor-reviewer/issues)
 - 💬 [Discussions](https://github.com/phdsystems/12-factor-reviewer/discussions)
 - 📧 Contact: phdsystemz@gmail.com
+- 📖 [FAQ](docs/FAQ.md) - Frequently Asked Questions

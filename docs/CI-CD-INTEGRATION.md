@@ -16,10 +16,10 @@ jobs:
       - name: Install 12-Factor Reviewer
         run: |
           git clone https://github.com/phdsystems/12-factor-reviewer.git
-          chmod +x 12-factor-reviewer/bin/12factor-assess
+          chmod +x 12-factor-reviewer/bin/twelve-factor-reviewer
 
       - name: Run Assessment
-        run: ./12-factor-reviewer/bin/12factor-assess . --strict
+        run: ./12-factor-reviewer/bin/twelve-factor-reviewer . --strict
 ```
 
 ### Advanced Workflow with Reporting
@@ -36,12 +36,12 @@ jobs:
       - name: Install 12-Factor Reviewer
         run: |
           git clone https://github.com/phdsystems/12-factor-reviewer.git
-          chmod +x 12-factor-reviewer/bin/12factor-assess
+          chmod +x 12-factor-reviewer/bin/twelve-factor-reviewer
 
       - name: Run Assessment
         id: assessment
         run: |
-          ./12-factor-reviewer/bin/12factor-assess . -f json > compliance.json
+          ./12-factor-reviewer/bin/twelve-factor-reviewer . -f json > compliance.json
           score=$(jq '.percentage' compliance.json)
           echo "score=$score" >> $GITHUB_OUTPUT
           echo "## 12-Factor Compliance: ${score}%" >> $GITHUB_STEP_SUMMARY
@@ -75,8 +75,8 @@ jobs:
   stage: test
   script:
     - git clone https://github.com/phdsystems/12-factor-reviewer.git
-    - chmod +x 12-factor-reviewer/bin/12factor-assess
-    - ./12-factor-reviewer/bin/12factor-assess . --strict
+    - chmod +x 12-factor-reviewer/bin/twelve-factor-reviewer
+    - ./12-factor-reviewer/bin/twelve-factor-reviewer . --strict
 ```
 
 ### Advanced Pipeline with Artifacts
@@ -89,9 +89,9 @@ stages:
   stage: test
   script:
     - git clone https://github.com/phdsystems/12-factor-reviewer.git
-    - chmod +x 12-factor-reviewer/bin/12factor-assess
-    - ./12-factor-reviewer/bin/12factor-assess . -f json > compliance.json
-    - ./12-factor-reviewer/bin/12factor-assess . -f markdown > compliance.md
+    - chmod +x 12-factor-reviewer/bin/twelve-factor-reviewer
+    - ./12-factor-reviewer/bin/twelve-factor-reviewer . -f json > compliance.json
+    - ./12-factor-reviewer/bin/twelve-factor-reviewer . -f markdown > compliance.md
   artifacts:
     reports:
       junit: compliance.json
@@ -128,8 +128,8 @@ pipeline {
             steps {
                 sh '''
                     git clone https://github.com/phdsystems/12-factor-reviewer.git
-                    chmod +x 12-factor-reviewer/bin/12factor-assess
-                    ./12-factor-reviewer/bin/12factor-assess . -f json > compliance.json
+                    chmod +x 12-factor-reviewer/bin/twelve-factor-reviewer
+                    ./12-factor-reviewer/bin/twelve-factor-reviewer . -f json > compliance.json
                 '''
             }
         }
@@ -177,11 +177,11 @@ jobs:
           name: Install 12-Factor Reviewer
           command: |
             git clone https://github.com/phdsystems/12-factor-reviewer.git
-            chmod +x 12-factor-reviewer/bin/12factor-assess
+            chmod +x 12-factor-reviewer/bin/twelve-factor-reviewer
       - run:
           name: Run Assessment
           command: |
-            ./12-factor-reviewer/bin/12factor-assess . -f json > compliance.json
+            ./12-factor-reviewer/bin/twelve-factor-reviewer . -f json > compliance.json
             cat compliance.json | jq .
       - store_artifacts:
           path: compliance.json
@@ -211,14 +211,14 @@ steps:
     targetType: 'inline'
     script: |
       git clone https://github.com/phdsystems/12-factor-reviewer.git
-      chmod +x 12-factor-reviewer/bin/12factor-assess
+      chmod +x 12-factor-reviewer/bin/twelve-factor-reviewer
 
 - task: Bash@3
   displayName: 'Run 12-Factor Assessment'
   inputs:
     targetType: 'inline'
     script: |
-      ./12-factor-reviewer/bin/12factor-assess . -f json > $(Build.ArtifactStagingDirectory)/compliance.json
+      ./12-factor-reviewer/bin/twelve-factor-reviewer . -f json > $(Build.ArtifactStagingDirectory)/compliance.json
       score=$(jq '.percentage' $(Build.ArtifactStagingDirectory)/compliance.json)
       echo "##vso[task.setvariable variable=complianceScore]$score"
       echo "12-Factor Compliance: ${score}%"
@@ -249,7 +249,7 @@ compliance:
   script:
     - apk add --no-cache git bash
     - git clone https://github.com/phdsystems/12-factor-reviewer.git
-    - ./12-factor-reviewer/bin/12factor-assess . --strict
+    - ./12-factor-reviewer/bin/twelve-factor-reviewer . --strict
 ```
 
 ## Exit Codes

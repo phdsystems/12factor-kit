@@ -5,7 +5,7 @@
 ### Synopsis
 
 ```bash
-12factor-assess [PROJECT_PATH] [OPTIONS]
+twelve-factor-reviewer [PROJECT_PATH] [OPTIONS]
 ```
 
 ### Arguments
@@ -288,7 +288,7 @@ Get current ISO 8601 timestamp
 ```yaml
 - name: 12-Factor Assessment
   run: |
-    packages/12factor-assess/bin/12factor-assess . --strict
+    twelve-factor-reviewer . --strict
 ```
 
 ### GitLab CI
@@ -296,7 +296,7 @@ Get current ISO 8601 timestamp
 ```yaml
 12factor-check:
   script:
-    - ./12factor-assess . -f json > compliance.json
+    - ./twelve-factor-reviewer . -f json > compliance.json
   artifacts:
     paths:
       - compliance.json
@@ -306,7 +306,7 @@ Get current ISO 8601 timestamp
 
 ```bash
 #!/bin/bash
-12factor-assess . --strict || {
+twelve-factor-reviewer . --strict || {
     echo "Project does not meet 12-factor compliance"
     exit 1
 }
@@ -315,7 +315,7 @@ Get current ISO 8601 timestamp
 ### Docker
 
 ```bash
-docker run -v $(pwd):/project 12factor-assess /project
+docker run -v $(pwd):/project twelve-factor-reviewer /project
 ```
 
 ## Extending the Tool

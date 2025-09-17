@@ -6,7 +6,7 @@
 ```bash
 git clone https://github.com/phdsystems/12-factor-reviewer.git
 cd 12-factor-reviewer
-./bin/12factor-assess /path/to/project
+./bin/twelve-factor-reviewer /path/to/project
 ```
 
 ## Installation Methods
@@ -19,14 +19,14 @@ git clone https://github.com/phdsystems/12-factor-reviewer.git
 cd 12-factor-reviewer
 
 # Make the tool executable
-chmod +x bin/12factor-assess
+chmod +x bin/twelve-factor-reviewer
 
 # Run directly
-./bin/12factor-assess /path/to/project
+./bin/twelve-factor-reviewer /path/to/project
 
 # Or add to PATH (optional)
 export PATH="$PATH:$(pwd)/bin"
-12factor-assess /path/to/project
+twelve-factor-reviewer /path/to/project
 ```
 
 ### Method 2: System-wide Installation
@@ -40,7 +40,7 @@ cd 12-factor-reviewer
 sudo ./install.sh
 
 # Now use from anywhere
-12factor-assess /path/to/project
+twelve-factor-reviewer /path/to/project
 ```
 
 ### Method 3: Docker Installation
@@ -64,7 +64,7 @@ docker run -v $(pwd):/project 12factor-reviewer
 npm install -g 12factor-reviewer
 
 # Run assessment
-12factor-assess /path/to/project
+twelve-factor-reviewer /path/to/project
 ```
 
 ## Verification
@@ -72,14 +72,11 @@ npm install -g 12factor-reviewer
 After installation, verify it works:
 
 ```bash
-# Check version
-12factor-assess --version
-
 # Show help
-12factor-assess --help
+twelve-factor-reviewer --help
 
 # Run on current directory
-12factor-assess .
+twelve-factor-reviewer .
 ```
 
 ## Updating
@@ -111,7 +108,7 @@ rm -rf 12-factor-reviewer
 
 ### Remove system-wide installation
 ```bash
-sudo rm /usr/local/bin/12factor-assess
+sudo rm /usr/local/bin/twelve-factor-reviewer
 ```
 
 ### Remove Docker image
@@ -123,7 +120,7 @@ docker rmi 12factor-reviewer
 
 ### Permission Denied
 ```bash
-chmod +x bin/12factor-assess
+chmod +x bin/twelve-factor-reviewer
 ```
 
 ### Command Not Found

@@ -4,29 +4,29 @@
 
 ```bash
 # Assess current directory
-12factor-assess
+twelve-factor-reviewer
 
 # Assess specific project
-12factor-assess /path/to/project
+twelve-factor-reviewer /path/to/project
 ```
 
 ## Output Formats
 
 ### Terminal Output (Default)
 ```bash
-12factor-assess /path/to/project
+twelve-factor-reviewer /path/to/project
 ```
 Provides colored, human-readable output with scores and recommendations.
 
 ### JSON Output
 ```bash
-12factor-assess /path/to/project -f json > report.json
+twelve-factor-reviewer /path/to/project -f json > report.json
 ```
 Machine-readable format for automation and further processing.
 
 ### Markdown Output
 ```bash
-12factor-assess /path/to/project -f markdown > report.md
+twelve-factor-reviewer /path/to/project -f markdown > report.md
 ```
 Documentation-friendly format for reports and wikis.
 
@@ -34,36 +34,36 @@ Documentation-friendly format for reports and wikis.
 
 | Option | Description | Example |
 |--------|------------|---------|
-| `-h, --help` | Show help message | `12factor-assess --help` |
-| `-v, --verbose` | Enable verbose output | `12factor-assess . -v` |
-| `-f, --format` | Output format (terminal/json/markdown) | `12factor-assess . -f json` |
-| `-s, --strict` | Exit with error if compliance < 80% | `12factor-assess . --strict` |
-| `-d, --depth` | Search depth for file scanning | `12factor-assess . -d 5` |
-| `-r, --remediate` | Generate remediation suggestions | `12factor-assess . --remediate` |
+| `-h, --help` | Show help message | `twelve-factor-reviewer --help` |
+| `-v, --verbose` | Enable verbose output | `twelve-factor-reviewer . -v` |
+| `-f, --format` | Output format (terminal/json/markdown) | `twelve-factor-reviewer . -f json` |
+| `--strict` | Exit with error if compliance < 80% | `twelve-factor-reviewer . --strict` |
+| `-d, --depth` | Search depth for file scanning | `twelve-factor-reviewer . -d 5` |
+| `--remediate` | Generate remediation suggestions | `twelve-factor-reviewer . --remediate` |
 
 ## Examples
 
 ### Basic Assessment
 ```bash
-12factor-assess ~/my-project
+twelve-factor-reviewer ~/my-project
 ```
 
 ### CI/CD Pipeline Integration
 ```bash
 # Fail build if compliance is below 80%
-12factor-assess . --strict
+twelve-factor-reviewer . --strict
 
 # Generate JSON report for further processing
-12factor-assess . -f json > compliance.json
+twelve-factor-reviewer . -f json > compliance.json
 ```
 
 ### Detailed Analysis
 ```bash
 # Verbose output with deep scanning
-12factor-assess . --verbose --depth 5
+twelve-factor-reviewer . --verbose --depth 5
 
 # Generate full report with remediation
-12factor-assess . -f markdown --remediate > assessment.md
+twelve-factor-reviewer . -f markdown --remediate > assessment.md
 ```
 
 ### Batch Assessment
@@ -71,7 +71,7 @@ Documentation-friendly format for reports and wikis.
 # Assess multiple projects
 for dir in ~/projects/*; do
   echo "Assessing $dir"
-  12factor-assess "$dir" -f json > "reports/$(basename $dir).json"
+  twelve-factor-reviewer "$dir" -f json > "reports/$(basename $dir).json"
 done
 ```
 
@@ -115,7 +115,7 @@ strict: true
 ```yaml
 - name: Check 12-Factor Compliance
   run: |
-    12factor-assess . --strict -f json > compliance.json
+    twelve-factor-reviewer . --strict -f json > compliance.json
     score=$(jq '.percentage' compliance.json)
     echo "Compliance: $score%"
 ```
@@ -123,7 +123,7 @@ strict: true
 #### Pre-commit Hook
 ```bash
 #!/bin/bash
-12factor-assess . --strict || {
+twelve-factor-reviewer . --strict || {
   echo "Project does not meet 12-Factor compliance standards"
   exit 1
 }
