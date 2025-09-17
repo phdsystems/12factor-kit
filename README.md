@@ -36,6 +36,7 @@ cd 12-factor-reviewer
 | [API Reference](docs/API.md) | Detailed API documentation |
 | [Architecture](docs/ARCHITECTURE.md) | System design and internals |
 | [Contributing](docs/CONTRIBUTING.md) | How to contribute |
+| [Testing](docs/TESTING.md) | Test suite and coverage |
 
 ## ✨ Key Features
 
@@ -44,7 +45,7 @@ cd 12-factor-reviewer
 - ✅ Provides remediation suggestions
 - ✅ Integrates with CI/CD pipelines
 - ✅ Docker support included
-- ✅ 100% test coverage (46 tests passing)
+- ✅ Comprehensive test suite (46 tests, 100% passing)
 
 ## 📊 The 12 Factors
 
