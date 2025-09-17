@@ -32,6 +32,7 @@ TEST_SCRIPTS=(
     "tests/test-terminal-output.sh"
     "tests/test-remediation.sh"
     "tests/test-edge-cases.sh"
+    "tests/test-coverage-gaps.sh"
 )
 
 # Cleanup previous coverage
