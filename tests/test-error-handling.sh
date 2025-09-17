@@ -18,7 +18,7 @@ NC='\033[0m'
 # Test configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-TOOL_PATH="$PROJECT_ROOT/bin/12factor-assess"
+TOOL_PATH="$PROJECT_ROOT/bin/twelve-factor-reviewer"
 TEST_TEMP_DIR="/tmp/12factor-test-errors-$$"
 
 # Test tracking

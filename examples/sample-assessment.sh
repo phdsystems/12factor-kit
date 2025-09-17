@@ -9,7 +9,7 @@
 set -euo pipefail
 
 # Configuration
-TOOL_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/../bin" && pwd)/12factor-assess.sh"
+TOOL_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/../bin" && pwd)/twelve-factor-reviewer"
 PROJECTS_DIR="${1:-/path/to/projects}"
 OUTPUT_DIR="${2:-./reports}"
 

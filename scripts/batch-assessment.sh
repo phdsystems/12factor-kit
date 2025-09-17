@@ -10,7 +10,7 @@ set -euo pipefail
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TOOL_PATH="${SCRIPT_DIR}/../bin/12factor-assess"
+TOOL_PATH="${SCRIPT_DIR}/../bin/twelve-factor-reviewer"
 OUTPUT_DIR="${OUTPUT_DIR:-./assessment-reports}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 

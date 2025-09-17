@@ -24,7 +24,7 @@ COPY src/ /app/src/
 COPY config/ /app/config/
 
 # Make executable
-RUN chmod +x /app/bin/12factor-assess
+RUN chmod +x /app/bin/twelve-factor-reviewer
 
 # Add to PATH
 ENV PATH="/app/bin:${PATH}"
@@ -33,5 +33,5 @@ ENV PATH="/app/bin:${PATH}"
 WORKDIR /project
 
 # Default command
-ENTRYPOINT ["12factor-assess"]
+ENTRYPOINT ["twelve-factor-reviewer"]
 CMD ["."]

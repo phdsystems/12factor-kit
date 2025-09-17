@@ -7,7 +7,7 @@ echo "======================================"
 
 # Test basic functionality
 echo -n "Tool exists: "
-if [[ -x bin/12factor-assess ]]; then
+if [[ -x bin/twelve-factor-reviewer ]]; then
     echo "✓"
 else
     echo "✗"
@@ -16,7 +16,7 @@ fi
 
 # Test on current project
 echo -n "Runs on current directory: "
-if bin/12factor-assess . -f json > /tmp/test.json 2>/dev/null; then
+if bin/twelve-factor-reviewer . -f json > /tmp/test.json 2>/dev/null; then
     echo "✓"
 else
     echo "✗"
@@ -34,7 +34,7 @@ fi
 
 # Test strict mode exits correctly
 echo -n "Strict mode works: "
-if bin/12factor-assess . --strict &>/dev/null; then
+if bin/twelve-factor-reviewer . --strict &>/dev/null; then
     # High compliance, passed
     echo "✓ (passed threshold)"
 else

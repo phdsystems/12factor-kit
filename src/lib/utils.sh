@@ -133,7 +133,7 @@ has_cicd() {
 
 # Create temporary directory
 create_temp_dir() {
-    mktemp -d -t 12factor-assess-XXXXXX
+    mktemp -d -t twelve-factor-reviewer-XXXXXX
 }
 
 # Clean up temporary files

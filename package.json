@@ -2,14 +2,14 @@
   "name": "12-factor-reviewer",
   "version": "1.0.0",
   "description": "Comprehensive language-agnostic 12-Factor App compliance review and assessment tool",
-  "main": "bin/12factor-assess",
+  "main": "bin/twelve-factor-reviewer",
   "scripts": {
     "test": "./tests/test-core-assessment.sh",
     "install": "./install.sh --local",
     "uninstall": "./install.sh --uninstall --local",
-    "assess": "./bin/12factor-assess",
-    "assess:json": "./bin/12factor-assess . -f json",
-    "assess:markdown": "./bin/12factor-assess . -f markdown",
+    "assess": "./bin/twelve-factor-reviewer",
+    "assess:json": "./bin/twelve-factor-reviewer . -f json",
+    "assess:markdown": "./bin/twelve-factor-reviewer . -f markdown",
     "docker:build": "docker build -t 12factor-reviewer .",
     "docker:run": "docker run -v $(pwd):/project 12factor-reviewer"
   },
@@ -44,8 +44,8 @@
     "linux"
   ],
   "bin": {
-    "12factor-assess": "./bin/12factor-assess",
-    "12factor-reviewer": "./bin/12factor-assess"
+    "twelve-factor-reviewer": "./bin/twelve-factor-reviewer",
+    "12factor-reviewer": "./bin/twelve-factor-reviewer"
   },
   "files": [
     "bin/",

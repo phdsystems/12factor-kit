@@ -21,7 +21,7 @@ NC='\033[0m'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
 LOCAL_INSTALL="${LOCAL_INSTALL:-false}"
-TOOL_NAME="12factor-assess"
+TOOL_NAME="twelve-factor-reviewer"
 
 # ==============================================================================
 # Functions
@@ -74,7 +74,7 @@ check_dependencies() {
 }
 
 install_tool() {
-    local source_file="${SCRIPT_DIR}/bin/12factor-assess.sh"
+    local source_file="${SCRIPT_DIR}/bin/twelve-factor-reviewer"
     local target_file="${INSTALL_DIR}/${TOOL_NAME}"
     
     # Check if source file exists

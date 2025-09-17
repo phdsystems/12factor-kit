@@ -44,13 +44,13 @@ uninstall:
 
 # Assessment targets
 assess:
-	@./bin/12factor-assess.sh .
+	@./bin/twelve-factor-reviewer .
 
 assess-json:
-	@./bin/12factor-assess.sh . -f json
+	@./bin/twelve-factor-reviewer . -f json
 
 assess-md:
-	@./bin/12factor-assess.sh . -f markdown > assessment-report.md
+	@./bin/twelve-factor-reviewer . -f markdown > assessment-report.md
 	@echo "Report saved to assessment-report.md"
 
 # Testing targets
@@ -80,23 +80,23 @@ clean:
 
 check:
 	@echo "Checking tool integrity..."
-	@test -f bin/12factor-assess.sh || (echo "Error: Main script not found" && exit 1)
+	@test -f bin/twelve-factor-reviewer || (echo "Error: Main script not found" && exit 1)
 	@test -f tests/test-core-assessment.sh || (echo "Error: Test script not found" && exit 1)
-	@test -x bin/12factor-assess.sh || (echo "Error: Main script not executable" && exit 1)
+	@test -x bin/twelve-factor-reviewer || (echo "Error: Main script not executable" && exit 1)
 	@test -x tests/test-core-assessment.sh || (echo "Error: Test script not executable" && exit 1)
 	@echo "✓ Tool integrity check passed"
 
 # Project-specific assessments
 assess-project:
-	@./bin/12factor-assess.sh ../..
+	@./bin/twelve-factor-reviewer ../..
 
 assess-dockerkit:
-	@./bin/12factor-assess.sh ../../src
+	@./bin/twelve-factor-reviewer ../../src
 
 # CI/CD targets
 ci: check test
 	@echo "CI checks completed successfully"
 
 ci-strict: check
-	@./bin/12factor-assess.sh . --strict
+	@./bin/twelve-factor-reviewer . --strict
 	@./tests/test-core-assessment.sh

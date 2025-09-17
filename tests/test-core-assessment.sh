@@ -19,7 +19,7 @@ NC='\033[0m'
 
 # Test configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TOOL_PATH="${SCRIPT_DIR}/../bin/12factor-assess"
+TOOL_PATH="${SCRIPT_DIR}/../bin/twelve-factor-reviewer"
 TEST_TEMP_DIR=""
 TESTS_PASSED=0
 TESTS_FAILED=0
