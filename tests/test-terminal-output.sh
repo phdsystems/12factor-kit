@@ -42,6 +42,14 @@ fail_test() {
     ((TESTS_FAILED++))
 }
 
+setup_test_environment() {
+    TEST_TEMP_DIR=$(mktemp -d -t test-XXXXXX)
+
+    # Configure git for tests to prevent hanging
+    git config --global user.email "test@example.com" 2>/dev/null || true
+    git config --global user.name "Test User" 2>/dev/null || true
+}
+
 cleanup_test_environment() {
     rm -rf "$TEST_TEMP_DIR"
 }
@@ -93,10 +101,12 @@ EOF
     # Git
     cd "$project_dir"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial"
+    timeout 5 git commit -q -m "Initial"
     git remote add origin https://github.com/test/repo.git
     cd - >/dev/null
 }
@@ -111,6 +121,8 @@ create_poor_compliance_project() {
 
     cd "$project_dir"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     git config user.name "Test"
     git config user.email "test@example.com"
     cd - >/dev/null
@@ -123,7 +135,7 @@ test_terminal_output_high_compliance() {
     create_compliant_project "$compliant_project"
 
     # Run with terminal output
-    local output=$("$TOOL_PATH" "$compliant_project" -f terminal 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$compliant_project" -f terminal 2>&1)
 
     # Check for required elements
     if echo "$output" | grep -q "12-FACTOR COMPLIANCE REPORT"; then
@@ -173,7 +185,7 @@ test_terminal_output_low_compliance() {
     create_poor_compliance_project "$poor_project"
 
     # Run with terminal output
-    local output=$("$TOOL_PATH" "$poor_project" -f terminal 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$poor_project" -f terminal 2>&1)
 
     # Check for low score indicators
     if echo "$output" | grep -q "░"; then
@@ -199,12 +211,14 @@ test_terminal_color_codes() {
 
     cd "$test_project"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     git config user.name "Test"
     git config user.email "test@example.com"
     cd - >/dev/null
 
     # Force color output
-    local output=$(TERM=xterm-256color "$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output=$(TERM=xterm-256color timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     # Check for ANSI color codes
     if echo "$output" | grep -q "\[0;3[0-9]m\|\[1;3[0-9]m\|\[1m"; then
@@ -220,7 +234,7 @@ test_terminal_score_display() {
     local test_project="$TEST_TEMP_DIR/score_test"
     create_compliant_project "$test_project"
 
-    local output=$("$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     # Check score format (e.g., "95/120")
     if echo "$output" | grep -q "[0-9]\+/[0-9]\+"; then
@@ -250,7 +264,7 @@ test_terminal_factor_scores() {
     local test_project="$TEST_TEMP_DIR/factor_test"
     create_compliant_project "$test_project"
 
-    local output=$("$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     # Check individual factor scores
     if echo "$output" | grep -q "([0-9]\+/10)"; then
@@ -279,12 +293,14 @@ test_terminal_remediation_display() {
 
     cd "$poor_project"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     git config user.name "Test"
     git config user.email "test@example.com"
     cd - >/dev/null
 
     # Run with remediation
-    local output=$("$TOOL_PATH" "$poor_project" --remediate 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$poor_project" --remediate 2>&1)
 
     if echo "$output" | grep -q "npm install\|package-lock\|lock file"; then
         pass_test "Suggests lock file creation"
@@ -308,12 +324,14 @@ test_terminal_width_handling() {
 
     cd "$test_project"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     git config user.name "Test"
     git config user.email "test@example.com"
     cd - >/dev/null
 
     # Test with narrow terminal
-    local output=$(COLUMNS=40 "$TOOL_PATH" "$test_project" 2>&1)
+    local output=$(COLUMNS=40 timeout 10 "$TOOL_PATH" "$test_project" 2>&1)
     if [[ -n "$output" ]]; then
         pass_test "Handles narrow terminal width"
     else
@@ -321,7 +339,7 @@ test_terminal_width_handling() {
     fi
 
     # Test with wide terminal
-    output=$(COLUMNS=200 "$TOOL_PATH" "$test_project" 2>&1)
+    output=$(COLUMNS=200 timeout 10 "$TOOL_PATH" "$test_project" 2>&1)
     if [[ -n "$output" ]]; then
         pass_test "Handles wide terminal width"
     else
@@ -351,13 +369,15 @@ test_progress_bar_rendering() {
                 echo "FROM node:18" > "$test_project/Dockerfile"
                 cd "$test_project"
                 git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
                 git config user.name "Test"
                 git config user.email "test@example.com"
                 cd - >/dev/null
                 ;;
         esac
 
-        local output=$("$TOOL_PATH" "$test_project" -f terminal 2>&1)
+        local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
         if echo "$output" | grep -q "\[.*\]"; then
             pass_test "Progress bar renders for $level compliance"
@@ -379,11 +399,13 @@ test_terminal_special_characters() {
 
     cd "$test_project"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     git config user.name "Test User™"
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$test_project" -f terminal 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$test_project" -f terminal 2>&1)
 
     if [[ -n "$output" ]]; then
         pass_test "Handles special characters without crashing"
@@ -398,7 +420,7 @@ test_terminal_empty_project() {
     local empty_project="$TEST_TEMP_DIR/empty"
     mkdir -p "$empty_project"
 
-    local output=$("$TOOL_PATH" "$empty_project" -f terminal 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$empty_project" -f terminal 2>&1)
 
     if echo "$output" | grep -q "12-FACTOR\|Score\|Compliance"; then
         pass_test "Produces structured output for empty project"
@@ -413,7 +435,8 @@ main() {
     echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
     # Create test environment
-    mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Run tests
     test_terminal_output_high_compliance

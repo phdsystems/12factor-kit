@@ -42,6 +42,14 @@ fail_test() {
     ((TESTS_FAILED++))
 }
 
+setup_test_environment() {
+    TEST_TEMP_DIR=$(mktemp -d -t test-XXXXXX)
+
+    # Configure git for tests to prevent hanging
+    git config --global user.email "test@example.com" 2>/dev/null || true
+    git config --global user.name "Test User" 2>/dev/null || true
+}
+
 cleanup_test_environment() {
     rm -rf "$TEST_TEMP_DIR"
 }
@@ -59,7 +67,7 @@ test_multiple_git_remotes() {
     git config user.email "test@example.com"
     echo "test" > test.txt
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
 
     # Add multiple remotes to trigger the specific path
     git remote add origin https://github.com/user/repo1.git
@@ -69,7 +77,7 @@ test_multiple_git_remotes() {
     cd - >/dev/null
 
     # Test assessment should detect multiple remotes
-    local output=$("$TOOL_PATH" "$multi_remote_project" 2>/dev/null)
+    local output=$(timeout 10 "$TOOL_PATH" "$multi_remote_project" 2>/dev/null)
     if echo "$output" | grep -q -i "multiple.*remote\|remote.*multiple"; then
         pass_test "Detects multiple git remotes"
     else
@@ -91,10 +99,10 @@ test_no_lock_file_scenario() {
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$no_lock_project" 2>/dev/null)
+    local output=$(timeout 10 "$TOOL_PATH" "$no_lock_project" 2>/dev/null)
     if echo "$output" | grep -q -i "no.*lock.*file\|lock.*file.*missing"; then
         pass_test "Detects missing lock file"
     else
@@ -118,10 +126,10 @@ test_hardcoded_secrets_detection() {
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$secrets_project" 2>/dev/null)
+    local output=$(timeout 10 "$TOOL_PATH" "$secrets_project" 2>/dev/null)
     if echo "$output" | grep -q -i "hardcoded\|secret\|credential"; then
         pass_test "Detects hardcoded secrets"
     else
@@ -150,10 +158,10 @@ EOF
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$single_stage_project" 2>/dev/null)
+    local output=$(timeout 10 "$TOOL_PATH" "$single_stage_project" 2>/dev/null)
     if echo "$output" | grep -q -i "single.*stage\|single-stage"; then
         pass_test "Detects single-stage Dockerfile"
     else
@@ -187,10 +195,10 @@ EOF
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$session_project" 2>/dev/null)
+    local output=$(timeout 10 "$TOOL_PATH" "$session_project" 2>/dev/null)
     if echo "$output" | grep -q -i "session\|state.*management\|localStorage\|cookie"; then
         pass_test "Detects session/state management"
     else
@@ -213,10 +221,10 @@ test_no_concurrency_features() {
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$no_concurrency_project" 2>/dev/null)
+    local output=$(timeout 10 "$TOOL_PATH" "$no_concurrency_project" 2>/dev/null)
     # This should trigger remediation suggestions for concurrency
     if echo "$output" | grep -q -i "concurrency\|scaling\|worker\|process"; then
         pass_test "Suggests concurrency improvements"
@@ -251,10 +259,10 @@ EOF
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$no_signals_project" 2>/dev/null")
+    local output=$(timeout 10 "$TOOL_PATH" "$no_signals_project" 2>/dev/null")
     if echo "$output" | grep -q -i "signal\|SIGTERM\|SIGINT\|graceful"; then
         pass_test "Detects missing signal handling"
     else
@@ -284,10 +292,10 @@ EOF
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$no_health_project" 2>/dev/null")
+    local output=$(timeout 10 "$TOOL_PATH" "$no_health_project" 2>/dev/null")
     if echo "$output" | grep -q -i "health.*check\|health.*endpoint\|readiness\|liveness"; then
         pass_test "Suggests health check endpoints"
     else
@@ -309,10 +317,10 @@ test_different_project_types() {
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    "$TOOL_PATH" "$python_project" >/dev/null 2>&1
+    timeout 10 "$TOOL_PATH" "$python_project" >/dev/null 2>&1
     pass_test "Handles Python project"
 
     # Test PHP project
@@ -326,10 +334,10 @@ test_different_project_types() {
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    "$TOOL_PATH" "$php_project" >/dev/null 2>&1
+    timeout 10 "$TOOL_PATH" "$php_project" >/dev/null 2>&1
     pass_test "Handles PHP project"
 
     # Test Ruby project
@@ -343,10 +351,10 @@ test_different_project_types() {
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 
-    "$TOOL_PATH" "$ruby_project" >/dev/null 2>&1
+    timeout 10 "$TOOL_PATH" "$ruby_project" >/dev/null 2>&1
     pass_test "Handles Ruby project"
 }
 
@@ -383,11 +391,11 @@ EOF
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     git remote add origin https://github.com/user/complex.git
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$complex_project" 2>/dev/null")
+    local output=$(timeout 10 "$TOOL_PATH" "$complex_project" 2>/dev/null")
     if [[ ${#output} -gt 500 ]]; then
         pass_test "Produces comprehensive assessment for complex project"
     else
@@ -400,8 +408,8 @@ main() {
     echo -e "${BOLD}     12-Factor Assessment Tool - Assessment Paths Tests${NC}"
     echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-    # Create test environment
-    mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Run tests to cover specific assessment paths
     test_multiple_git_remotes

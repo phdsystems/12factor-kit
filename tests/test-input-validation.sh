@@ -40,6 +40,14 @@ fail_test() {
     ((TESTS_FAILED++))
 }
 
+setup_test_environment() {
+    TEST_TEMP_DIR=$(mktemp -d -t test-XXXXXX)
+
+    # Configure git for tests to prevent hanging
+    git config --global user.email "test@example.com" 2>/dev/null || true
+    git config --global user.name "Test User" 2>/dev/null || true
+}
+
 cleanup_test_environment() {
     rm -rf "$TEST_TEMP_DIR"
 }
@@ -51,7 +59,7 @@ test_missing_format_argument() {
     echo "{}" > "$TEST_TEMP_DIR/test_project/package.json"
 
     # Test -f without argument
-    local output=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f 2>&1 || true)
+    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f 2>&1 || true)
     if [[ "$output" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing format argument"
     else
@@ -59,7 +67,7 @@ test_missing_format_argument() {
     fi
 
     # Test --format without argument
-    local output2=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --format 2>&1 || true)
+    local output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --format 2>&1 || true)
     if [[ "$output2" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing --format argument"
     else
@@ -74,7 +82,7 @@ test_invalid_format_validation() {
     echo "{}" > "$TEST_TEMP_DIR/test_project/package.json"
 
     # Test invalid format with warning
-    local output=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
+    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
     if [[ "$output" == *"Warning: Unknown format"* ]]; then
         pass_test "Shows warning for invalid format"
     else
@@ -95,7 +103,7 @@ test_missing_depth_argument() {
     mkdir -p "$TEST_TEMP_DIR/test_project"
 
     # Test -d without argument
-    local output=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2>&1 || true)
+    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2>&1 || true)
     if [[ "$output" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing depth argument"
     else
@@ -103,7 +111,7 @@ test_missing_depth_argument() {
     fi
 
     # Test --depth without argument
-    local output2=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --depth 2>&1 || true)
+    local output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" --depth 2>&1 || true)
     if [[ "$output2" == *"requires an argument"* ]]; then
         pass_test "Shows error for missing --depth argument"
     else
@@ -117,7 +125,7 @@ test_invalid_depth_values() {
     mkdir -p "$TEST_TEMP_DIR/test_project"
 
     # Test negative depth
-    local output=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d -1 2>&1 || true)
+    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d -1 2>&1 || true)
     if [[ "$output" == *"must be a positive integer"* ]]; then
         pass_test "Rejects negative depth"
     else
@@ -125,7 +133,7 @@ test_invalid_depth_values() {
     fi
 
     # Test zero depth
-    local output2=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 0 2>&1 || true)
+    local output2=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 0 2>&1 || true)
     if [[ "$output2" == *"must be a positive integer"* ]]; then
         pass_test "Rejects zero depth"
     else
@@ -133,7 +141,7 @@ test_invalid_depth_values() {
     fi
 
     # Test non-numeric depth
-    local output3=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d abc 2>&1 || true)
+    local output3=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d abc 2>&1 || true)
     if [[ "$output3" == *"must be a positive integer"* ]]; then
         pass_test "Rejects non-numeric depth"
     else
@@ -141,7 +149,7 @@ test_invalid_depth_values() {
     fi
 
     # Test fractional depth
-    local output4=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2.5 2>&1 || true)
+    local output4=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 2.5 2>&1 || true)
     if [[ "$output4" == *"must be a positive integer"* ]]; then
         pass_test "Rejects fractional depth"
     else
@@ -157,7 +165,7 @@ test_valid_parameters() {
 
     # Test valid formats
     for format in terminal json markdown; do
-        if "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f "$format" >/dev/null 2>&1; then
+        if timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f "$format" >/dev/null 2>&1; then
             pass_test "Accepts valid format: $format"
         else
             fail_test "Should accept valid format: $format"
@@ -166,7 +174,7 @@ test_valid_parameters() {
 
     # Test valid depths
     for depth in 1 2 5 10; do
-        if "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d "$depth" >/dev/null 2>&1; then
+        if timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d "$depth" >/dev/null 2>&1; then
             pass_test "Accepts valid depth: $depth"
         else
             fail_test "Should accept valid depth: $depth"
@@ -178,7 +186,7 @@ test_help_option() {
     run_test "Help option"
 
     # Test -h
-    local output=$("$TOOL_PATH" -h 2>&1 || true)
+    local output=$(timeout 10 "$TOOL_PATH" -h 2>&1 || true)
     if [[ "$output" == *"12-Factor App Compliance Assessment Tool"* ]]; then
         pass_test "Shows help with -h"
     else
@@ -186,7 +194,7 @@ test_help_option() {
     fi
 
     # Test --help
-    local output2=$("$TOOL_PATH" --help 2>&1 || true)
+    local output2=$(timeout 10 "$TOOL_PATH" --help 2>&1 || true)
     if [[ "$output2" == *"12-Factor App Compliance Assessment Tool"* ]]; then
         pass_test "Shows help with --help"
     else
@@ -198,7 +206,7 @@ test_nonexistent_path_error() {
     run_test "Nonexistent path error handling"
 
     # Test specific error message
-    local output=$("$TOOL_PATH" "/completely/fake/path" 2>&1 || true)
+    local output=$(timeout 10 "$TOOL_PATH" "/completely/fake/path" 2>&1 || true)
     if [[ "$output" == *"does not exist"* ]]; then
         pass_test "Shows 'does not exist' error message"
     else
@@ -206,7 +214,7 @@ test_nonexistent_path_error() {
     fi
 
     # Test exit code
-    if ! "$TOOL_PATH" "/completely/fake/path" >/dev/null 2>&1; then
+    if ! timeout 10 "$TOOL_PATH" "/completely/fake/path" >/dev/null 2>&1; then
         local exit_code=$?
         if [[ $exit_code -eq 1 ]]; then
             pass_test "Returns exit code 1 for nonexistent path"
@@ -227,7 +235,7 @@ test_file_instead_of_directory() {
     echo "test content" > "$test_file"
 
     # Should fail when given a file instead of directory
-    if ! "$TOOL_PATH" "$test_file" >/dev/null 2>&1; then
+    if ! timeout 10 "$TOOL_PATH" "$test_file" >/dev/null 2>&1; then
         pass_test "Rejects file input (expecting directory)"
     else
         fail_test "Should reject file input"
@@ -239,8 +247,8 @@ main() {
     echo -e "${BOLD}     12-Factor Assessment Tool - Validation Tests${NC}"
     echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-    # Create test environment
-    mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Run validation tests
     test_missing_format_argument

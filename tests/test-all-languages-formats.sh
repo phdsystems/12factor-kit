@@ -30,6 +30,14 @@ run_test() {
     fi
 }
 
+setup_test_environment() {
+    TEST_TEMP_DIR=$(mktemp -d -t test-XXXXXX)
+
+    # Configure git for tests to prevent hanging
+    git config --global user.email "test@example.com" 2>/dev/null || true
+    git config --global user.name "Test User" 2>/dev/null || true
+}
+
 cleanup_test_environment() {
     rm -rf "$TEST_TEMP_DIR"
 }
@@ -39,7 +47,8 @@ echo -e "${BOLD}     90% Coverage Comprehensive Test Suite${NC}"
 echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo "Running comprehensive tests (this may take a while)..."
 
-mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
 
 # ==============================================================================
 # SECTION 1: Test every output format with every project type
@@ -212,7 +221,7 @@ EOF
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial"
+    timeout 5 git commit -q -m "Initial"
     git remote add origin https://github.com/test/repo.git
     git remote add upstream https://github.com/upstream/repo.git
     git remote add heroku https://git.heroku.com/app.git
@@ -220,12 +229,12 @@ EOF
 
     # Test all format combinations
     for format in terminal json markdown; do
-        "$TOOL_PATH" "$PROJECT" -f $format >/dev/null 2>&1 && run_test
-        "$TOOL_PATH" "$PROJECT" -f $format --verbose >/dev/null 2>&1 && run_test
-        "$TOOL_PATH" "$PROJECT" -f $format --remediate >/dev/null 2>&1 && run_test
-        "$TOOL_PATH" "$PROJECT" -f $format --strict >/dev/null 2>&1 || run_test
-        "$TOOL_PATH" "$PROJECT" -f $format --depth 1 >/dev/null 2>&1 && run_test
-        "$TOOL_PATH" "$PROJECT" -f $format --depth 10 >/dev/null 2>&1 && run_test
+        timeout 10 "$TOOL_PATH" "$PROJECT" -f $format >/dev/null 2>&1 && run_test
+        timeout 10 "$TOOL_PATH" "$PROJECT" -f $format --verbose >/dev/null 2>&1 && run_test
+        timeout 10 "$TOOL_PATH" "$PROJECT" -f $format --remediate >/dev/null 2>&1 && run_test
+        timeout 10 "$TOOL_PATH" "$PROJECT" -f $format --strict >/dev/null 2>&1 || run_test
+        timeout 10 "$TOOL_PATH" "$PROJECT" -f $format --depth 1 >/dev/null 2>&1 && run_test
+        timeout 10 "$TOOL_PATH" "$PROJECT" -f $format --depth 10 >/dev/null 2>&1 && run_test
     done
 done
 
@@ -251,13 +260,13 @@ git config user.name "Test"
 git config user.email "test@example.com"
 cd - >/dev/null
 
-"$TOOL_PATH" "$PROJECT" --verbose --remediate >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose --remediate >/dev/null 2>&1 && run_test
 
 # Test projects with no git
 PROJECT="$TEST_TEMP_DIR/no_git"
 mkdir -p "$PROJECT"
 echo '{"name": "no-git"}' > "$PROJECT/package.json"
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test projects with no dependencies
 PROJECT="$TEST_TEMP_DIR/no_deps"
@@ -268,7 +277,7 @@ git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 cd - >/dev/null
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test projects with only lock files
 PROJECT="$TEST_TEMP_DIR/only_lock"
@@ -281,7 +290,7 @@ git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 cd - >/dev/null
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test with various signal handling patterns
 PROJECT="$TEST_TEMP_DIR/signals"
@@ -338,7 +347,7 @@ git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 cd - >/dev/null
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test with various health check patterns
 PROJECT="$TEST_TEMP_DIR/health"
@@ -363,7 +372,7 @@ git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 cd - >/dev/null
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test with connection pooling patterns
 PROJECT="$TEST_TEMP_DIR/pooling"
@@ -395,7 +404,7 @@ git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 cd - >/dev/null
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # ==============================================================================
 # SECTION 3: Test all verbose mode paths
@@ -488,19 +497,19 @@ git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 git add .
-git commit -q -m "Initial"
+timeout 5 git commit -q -m "Initial"
 git remote add origin https://github.com/test/repo.git
 git remote add upstream https://github.com/upstream/repo.git
 cd - >/dev/null
 
 # Run with verbose in all combinations
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
-"$TOOL_PATH" "$PROJECT" --verbose -f json >/dev/null 2>&1 && run_test
-"$TOOL_PATH" "$PROJECT" --verbose -f markdown >/dev/null 2>&1 && run_test
-"$TOOL_PATH" "$PROJECT" --verbose --remediate >/dev/null 2>&1 && run_test
-"$TOOL_PATH" "$PROJECT" --verbose --strict >/dev/null 2>&1 || run_test
-"$TOOL_PATH" "$PROJECT" --verbose --depth 10 >/dev/null 2>&1 && run_test
-VERBOSE=true "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose -f json >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose -f markdown >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose --remediate >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose --strict >/dev/null 2>&1 || run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose --depth 10 >/dev/null 2>&1 && run_test
+VERBOSE=true timeout 10 "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
 
 # ==============================================================================
 # SECTION 4: Test all environment variable combinations
@@ -517,9 +526,9 @@ git config user.email "test@example.com"
 cd - >/dev/null
 
 # Test all environment variable combinations
-VERBOSE=true REPORT_FORMAT=json CHECK_DEPTH=5 STRICT_MODE=false "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
-VERBOSE=false REPORT_FORMAT=markdown CHECK_DEPTH=1 STRICT_MODE=true "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 || run_test
-REPORT_FORMAT=terminal "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
+VERBOSE=true REPORT_FORMAT=json CHECK_DEPTH=5 STRICT_MODE=false timeout 10 "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
+VERBOSE=false REPORT_FORMAT=markdown CHECK_DEPTH=1 STRICT_MODE=true timeout 10 "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 || run_test
+REPORT_FORMAT=terminal timeout 10 "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
 
 # ==============================================================================
 # SECTION 5: Test all argument parsing paths
@@ -527,25 +536,25 @@ REPORT_FORMAT=terminal "$TOOL_PATH" "$PROJECT" >/dev/null 2>&1 && run_test
 echo -e "\n\n${BOLD}Section 5: Argument parsing${NC}"
 
 # Test help variations
-"$TOOL_PATH" -h 2>&1 | grep -q "Usage" && run_test
-"$TOOL_PATH" --help 2>&1 | grep -q "OPTIONS" && run_test
-"$TOOL_PATH" help 2>&1 | grep -q "12-Factor" || run_test
+timeout 10 "$TOOL_PATH" -h 2>&1 | grep -q "Usage" && run_test
+timeout 10 "$TOOL_PATH" --help 2>&1 | grep -q "OPTIONS" && run_test
+timeout 10 "$TOOL_PATH" help 2>&1 | grep -q "12-Factor" || run_test
 
 # Test invalid arguments
-"$TOOL_PATH" --invalid 2>&1 | grep -q "Usage\|Invalid" && run_test
-"$TOOL_PATH" -z 2>&1 | grep -q "Usage\|Unknown" && run_test
-"$TOOL_PATH" -f invalid 2>&1 | grep -q "terminal\|json\|markdown" && run_test
-"$TOOL_PATH" --depth abc 2>&1 | grep -q "number\|invalid" || run_test
-"$TOOL_PATH" --depth -1 2>&1 | grep -q "1-10\|invalid" || run_test
-"$TOOL_PATH" --depth 99 2>&1 | grep -q "1-10\|invalid" || run_test
+timeout 10 "$TOOL_PATH" --invalid 2>&1 | grep -q "Usage\|Invalid" && run_test
+timeout 10 "$TOOL_PATH" -z 2>&1 | grep -q "Usage\|Unknown" && run_test
+timeout 10 "$TOOL_PATH" -f invalid 2>&1 | grep -q "terminal\|json\|markdown" && run_test
+timeout 10 "$TOOL_PATH" --depth abc 2>&1 | grep -q "number\|invalid" || run_test
+timeout 10 "$TOOL_PATH" --depth -1 2>&1 | grep -q "1-10\|invalid" || run_test
+timeout 10 "$TOOL_PATH" --depth 99 2>&1 | grep -q "1-10\|invalid" || run_test
 
 # Test path validation
-"$TOOL_PATH" /nonexistent/path 2>&1 | grep -q "not found\|does not exist" && run_test
-"$TOOL_PATH" /etc/passwd 2>&1 | grep -q "directory\|not a project" || run_test
+timeout 10 "$TOOL_PATH" /nonexistent/path 2>&1 | grep -q "not found\|does not exist" && run_test
+timeout 10 "$TOOL_PATH" /etc/passwd 2>&1 | grep -q "directory\|not a project" || run_test
 
 # Test multiple arguments
-"$TOOL_PATH" "$TEST_TEMP_DIR/env_test" -v -f json --depth 5 --remediate >/dev/null 2>&1 && run_test
-"$TOOL_PATH" "$TEST_TEMP_DIR/env_test" --verbose --format markdown --strict >/dev/null 2>&1 || run_test
+timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/env_test" -v -f json --depth 5 --remediate >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/env_test" --verbose --format markdown --strict >/dev/null 2>&1 || run_test
 
 # ==============================================================================
 # SECTION 6: Test scoring edge cases
@@ -575,16 +584,16 @@ git init -q
 git config user.name "Test"
 git config user.email "test@example.com"
 git add .
-git commit -q -m "Initial"
+timeout 5 git commit -q -m "Initial"
 git remote add origin https://github.com/test/repo.git
 cd - >/dev/null
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 # Test zero score project
 PROJECT="$TEST_TEMP_DIR/zero"
 mkdir -p "$PROJECT"
 touch "$PROJECT/file.txt"
-"$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
+timeout 10 "$TOOL_PATH" "$PROJECT" --verbose >/dev/null 2>&1 && run_test
 
 echo -e "\n\n${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}${BOLD}✓ Completed $TESTS_RUN comprehensive tests${NC}"

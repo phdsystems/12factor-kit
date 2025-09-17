@@ -148,7 +148,7 @@ EOF
   git config user.name "Test"
   git config user.email "test@test.com"
   git add . 2>/dev/null
-  git commit -q -m "Initial" 2>/dev/null
+  timeout 5 git commit -q -m "Initial" 2>/dev/null
   git remote add origin https://github.com/test/repo.git 2>/dev/null
   git remote add upstream https://github.com/upstream/repo.git 2>/dev/null
   cd - >/dev/null

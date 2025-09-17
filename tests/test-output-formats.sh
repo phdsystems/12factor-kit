@@ -42,6 +42,14 @@ fail_test() {
     ((TESTS_FAILED++))
 }
 
+setup_test_environment() {
+    TEST_TEMP_DIR=$(mktemp -d -t test-XXXXXX)
+
+    # Configure git for tests to prevent hanging
+    git config --global user.email "test@example.com" 2>/dev/null || true
+    git config --global user.name "Test User" 2>/dev/null || true
+}
+
 cleanup_test_environment() {
     rm -rf "$TEST_TEMP_DIR"
 }
@@ -59,10 +67,12 @@ create_sample_project() {
     # Initialize git repository
     cd "$project_dir"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     git config user.name "Test User"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial commit"
+    timeout 5 git commit -q -m "Initial commit"
     cd - >/dev/null
 }
 
@@ -73,7 +83,7 @@ test_json_output_format() {
     create_sample_project "$json_project"
 
     # Test JSON output generation
-    local json_output=$("$TOOL_PATH" "$json_project" -f json 2>/dev/null)
+    local json_output=$(timeout 10 "$TOOL_PATH" "$json_project" -f json 2>/dev/null)
 
     # Validate JSON structure
     if echo "$json_output" | python3 -m json.tool >/dev/null 2>&1; then
@@ -128,7 +138,7 @@ test_json_output_format() {
     fi
 
     # Test JSON with verbose mode
-    local json_verbose=$("$TOOL_PATH" "$json_project" -f json --verbose 2>/dev/null)
+    local json_verbose=$(timeout 10 "$TOOL_PATH" "$json_project" -f json --verbose 2>/dev/null)
     if echo "$json_verbose" | python3 -m json.tool >/dev/null 2>&1; then
         pass_test "JSON with verbose mode is valid"
     else
@@ -143,7 +153,7 @@ test_markdown_output_format() {
     create_sample_project "$md_project"
 
     # Test markdown output generation
-    local md_output=$("$TOOL_PATH" "$md_project" -f markdown 2>/dev/null)
+    local md_output=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown 2>/dev/null)
 
     # Check markdown structure
     if echo "$md_output" | grep -q "# 12-Factor App Compliance Report"; then
@@ -197,7 +207,7 @@ test_markdown_output_format() {
     fi
 
     # Test markdown with verbose mode
-    local md_verbose=$("$TOOL_PATH" "$md_project" -f markdown --verbose 2>/dev/null)
+    local md_verbose=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown --verbose 2>/dev/null)
     if [[ ${#md_verbose} -gt ${#md_output} ]]; then
         pass_test "Markdown verbose mode produces more content"
     else
@@ -212,7 +222,7 @@ test_terminal_output_coverage() {
     create_sample_project "$terminal_project"
 
     # Test default terminal output
-    local terminal_output=$("$TOOL_PATH" "$terminal_project" 2>/dev/null)
+    local terminal_output=$(timeout 10 "$TOOL_PATH" "$terminal_project" 2>/dev/null)
 
     if echo "$terminal_output" | grep -q "12-Factor App Compliance Assessment"; then
         pass_test "Terminal output contains header"
@@ -252,10 +262,12 @@ test_remediation_output() {
 
     cd "$remediation_project"
     git init -q
+    git config user.name "Test User" 2>/dev/null || true
+    git config user.email "test@example.com" 2>/dev/null || true
     cd - >/dev/null
 
     # Test remediation mode
-    local remediation_output=$("$TOOL_PATH" "$remediation_project" --remediate 2>/dev/null || true)
+    local remediation_output=$(timeout 10 "$TOOL_PATH" "$remediation_project" --remediate 2>/dev/null || true)
 
     if echo "$remediation_output" | grep -q "Remediation\|Recommended\|TODO\|FIXME\|Improvements"; then
         pass_test "Remediation mode produces suggestions"
@@ -264,10 +276,10 @@ test_remediation_output() {
     fi
 
     # Test remediation with different formats
-    "$TOOL_PATH" "$remediation_project" --remediate -f json >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$remediation_project" --remediate -f json >/dev/null 2>&1 || true
     pass_test "Remediation works with JSON format"
 
-    "$TOOL_PATH" "$remediation_project" --remediate -f markdown >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$remediation_project" --remediate -f markdown >/dev/null 2>&1 || true
     pass_test "Remediation works with markdown format"
 }
 
@@ -278,13 +290,13 @@ test_output_with_empty_project() {
     mkdir -p "$empty_project"
 
     # Test all formats with empty project
-    "$TOOL_PATH" "$empty_project" -f terminal >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$empty_project" -f terminal >/dev/null 2>&1 || true
     pass_test "Terminal format handles empty project"
 
-    "$TOOL_PATH" "$empty_project" -f json >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$empty_project" -f json >/dev/null 2>&1 || true
     pass_test "JSON format handles empty project"
 
-    "$TOOL_PATH" "$empty_project" -f markdown >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$empty_project" -f markdown >/dev/null 2>&1 || true
     pass_test "Markdown format handles empty project"
 }
 
@@ -293,8 +305,8 @@ main() {
     echo -e "${BOLD}     12-Factor Assessment Tool - Output Format Tests${NC}"
     echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-    # Create test environment
-    mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Run tests
     test_json_output_format

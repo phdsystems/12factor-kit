@@ -46,6 +46,14 @@ fail_test() {
     ((TESTS_FAILED++))
 }
 
+setup_test_environment() {
+    TEST_TEMP_DIR=$(mktemp -d -t test-XXXXXX)
+
+    # Configure git for tests to prevent hanging
+    git config --global user.email "test@example.com" 2>/dev/null || true
+    git config --global user.name "Test User" 2>/dev/null || true
+}
+
 cleanup_test_environment() {
     rm -rf "$TEST_TEMP_DIR"
 }
@@ -60,7 +68,7 @@ test_nonexistent_directory() {
     local nonexistent_dir="/totally/fake/path/that/should/not/exist"
 
     # Should fail with exit code 1
-    if "$TOOL_PATH" "$nonexistent_dir" >/dev/null 2>&1; then
+    if timeout 10 "$TOOL_PATH" "$nonexistent_dir" >/dev/null 2>&1; then
         fail_test "Should fail for nonexistent directory"
     else
         local exit_code=$?
@@ -72,7 +80,7 @@ test_nonexistent_directory() {
     fi
 
     # Check error message
-    local error_output=$("$TOOL_PATH" "$nonexistent_dir" 2>&1 || true)
+    local error_output=$(timeout 10 "$TOOL_PATH" "$nonexistent_dir" 2>&1 || true)
     if [[ "$error_output" == *"does not exist"* ]]; then
         pass_test "Shows appropriate error message"
     else
@@ -84,11 +92,12 @@ test_file_instead_of_directory() {
     run_test "File instead of directory"
 
     local test_file="$TEST_TEMP_DIR/not-a-directory.txt"
-    mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
     echo "test" > "$test_file"
 
     # Should fail when given a file instead of directory
-    if "$TOOL_PATH" "$test_file" >/dev/null 2>&1; then
+    if timeout 10 "$TOOL_PATH" "$test_file" >/dev/null 2>&1; then
         fail_test "Should fail when given a file instead of directory"
     else
         pass_test "Correctly rejects file input"
@@ -98,10 +107,11 @@ test_file_instead_of_directory() {
 test_invalid_format_parameter() {
     run_test "Invalid format parameter"
 
-    mkdir -p "$TEST_TEMP_DIR/test_project"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Test invalid format
-    local output=$("$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
+    local output=$(timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f invalid_format 2>&1 || true)
     # Note: Current implementation doesn't validate format, but should handle gracefully
     # This tests that invalid formats don't crash the tool
     pass_test "Handles invalid format parameter gracefully"
@@ -110,10 +120,11 @@ test_invalid_format_parameter() {
 test_missing_format_argument() {
     run_test "Missing format argument"
 
-    mkdir -p "$TEST_TEMP_DIR/test_project"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Test -f without argument (should use next arg as format or fail)
-    if "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f >/dev/null 2>&1; then
+    if timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -f >/dev/null 2>&1; then
         # If it doesn't fail, check what happened
         pass_test "Handles missing format argument"
     else
@@ -124,10 +135,11 @@ test_missing_format_argument() {
 test_missing_depth_argument() {
     run_test "Missing depth argument"
 
-    mkdir -p "$TEST_TEMP_DIR/test_project"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Test -d without argument
-    if "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d >/dev/null 2>&1; then
+    if timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d >/dev/null 2>&1; then
         pass_test "Handles missing depth argument"
     else
         pass_test "Appropriately fails on missing depth argument"
@@ -137,18 +149,19 @@ test_missing_depth_argument() {
 test_invalid_depth_values() {
     run_test "Invalid depth values"
 
-    mkdir -p "$TEST_TEMP_DIR/test_project"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Test negative depth
-    "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d -1 >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d -1 >/dev/null 2>&1 || true
     pass_test "Handles negative depth"
 
     # Test non-numeric depth
-    "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d abc >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d abc >/dev/null 2>&1 || true
     pass_test "Handles non-numeric depth"
 
     # Test zero depth
-    "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 0 >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR/test_project" -d 0 >/dev/null 2>&1 || true
     pass_test "Handles zero depth"
 }
 
@@ -159,14 +172,14 @@ test_empty_directory() {
     mkdir -p "$empty_dir"
 
     # Should run without crashing
-    if "$TOOL_PATH" "$empty_dir" >/dev/null 2>&1; then
+    if timeout 10 "$TOOL_PATH" "$empty_dir" >/dev/null 2>&1; then
         pass_test "Handles empty directory without crashing"
     else
         fail_test "Should handle empty directory gracefully"
     fi
 
     # Check that it produces some output
-    local output=$("$TOOL_PATH" "$empty_dir" 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$empty_dir" 2>&1)
     if [[ -n "$output" ]]; then
         pass_test "Produces output for empty directory"
     else
@@ -182,7 +195,7 @@ test_permission_denied_directory() {
     chmod 000 "$restricted_dir"
 
     # Test should handle permission issues gracefully
-    "$TOOL_PATH" "$restricted_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$restricted_dir" >/dev/null 2>&1 || true
     pass_test "Handles permission denied gracefully"
 
     # Restore permissions for cleanup
@@ -202,10 +215,10 @@ test_very_deep_directory_structure() {
     echo "password=secret" > "$deep_dir/config.conf"
 
     # Test with different depth limits
-    "$TOOL_PATH" "$TEST_TEMP_DIR" -d 5 >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR" -d 5 >/dev/null 2>&1 || true
     pass_test "Handles depth limit correctly"
 
-    "$TOOL_PATH" "$TEST_TEMP_DIR" -d 15 >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$TEST_TEMP_DIR" -d 15 >/dev/null 2>&1 || true
     pass_test "Handles large depth values"
 }
 
@@ -217,7 +230,7 @@ test_special_characters_in_path() {
     echo "{}" > "$special_dir/package.json"
 
     # Should handle spaces in paths
-    if "$TOOL_PATH" "$special_dir" >/dev/null 2>&1; then
+    if timeout 10 "$TOOL_PATH" "$special_dir" >/dev/null 2>&1; then
         pass_test "Handles spaces in directory names"
     else
         fail_test "Should handle spaces in directory names"
@@ -226,7 +239,7 @@ test_special_characters_in_path() {
     # Test other special characters
     local weird_dir="$TEST_TEMP_DIR/test-with_symbols.123"
     mkdir -p "$weird_dir"
-    "$TOOL_PATH" "$weird_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$weird_dir" >/dev/null 2>&1 || true
     pass_test "Handles special characters in paths"
 }
 
@@ -241,7 +254,7 @@ test_symlink_handling() {
     ln -s "$real_dir" "$link_dir"
 
     # Should follow symlinks
-    if "$TOOL_PATH" "$link_dir" >/dev/null 2>&1; then
+    if timeout 10 "$TOOL_PATH" "$link_dir" >/dev/null 2>&1; then
         pass_test "Follows symlinks correctly"
     else
         fail_test "Should follow symlinks"
@@ -258,7 +271,7 @@ test_large_files() {
     dd if=/dev/zero of="$large_dir/large_file.txt" bs=1024 count=1024 2>/dev/null
 
     # Should handle large files without issues
-    "$TOOL_PATH" "$large_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$large_dir" >/dev/null 2>&1 || true
     pass_test "Handles large files"
 }
 
@@ -273,7 +286,7 @@ test_unicode_content() {
     echo 'DATABASE_URL=postgresql://用户:密码@localhost/数据库' > "$unicode_dir/.env"
 
     # Should handle unicode without crashing
-    "$TOOL_PATH" "$unicode_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$unicode_dir" >/dev/null 2>&1 || true
     pass_test "Handles unicode content"
 }
 
@@ -287,7 +300,7 @@ test_binary_files() {
     dd if=/dev/urandom of="$binary_dir/binary_file.bin" bs=1024 count=1 2>/dev/null
 
     # Should handle binary files without crashing
-    "$TOOL_PATH" "$binary_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$binary_dir" >/dev/null 2>&1 || true
     pass_test "Handles binary files"
 }
 
@@ -299,9 +312,9 @@ test_concurrent_execution() {
     echo "{}" > "$concurrent_dir/package.json"
 
     # Run multiple instances concurrently
-    "$TOOL_PATH" "$concurrent_dir" >/dev/null 2>&1 &
-    "$TOOL_PATH" "$concurrent_dir" >/dev/null 2>&1 &
-    "$TOOL_PATH" "$concurrent_dir" >/dev/null 2>&1 &
+    timeout 10 "$TOOL_PATH" "$concurrent_dir" >/dev/null 2>&1 &
+    timeout 10 "$TOOL_PATH" "$concurrent_dir" >/dev/null 2>&1 &
+    timeout 10 "$TOOL_PATH" "$concurrent_dir" >/dev/null 2>&1 &
 
     wait
     pass_test "Handles concurrent execution"
@@ -321,7 +334,7 @@ test_malformed_json_files() {
     echo '{"name": "test", invalid json}' > "$malformed_dir/package.json"
 
     # Should handle malformed JSON gracefully
-    "$TOOL_PATH" "$malformed_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$malformed_dir" >/dev/null 2>&1 || true
     pass_test "Handles malformed JSON files"
 }
 
@@ -335,7 +348,7 @@ test_extremely_long_lines() {
     printf '{"name":"%*s"}' 10000 "" | tr ' ' 'a' > "$long_dir/package.json"
 
     # Should handle long lines
-    "$TOOL_PATH" "$long_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$long_dir" >/dev/null 2>&1 || true
     pass_test "Handles extremely long lines"
 }
 
@@ -351,7 +364,7 @@ test_many_files() {
     done
 
     # Should handle many files
-    "$TOOL_PATH" "$many_files_dir" >/dev/null 2>&1 || true
+    timeout 10 "$TOOL_PATH" "$many_files_dir" >/dev/null 2>&1 || true
     pass_test "Handles directories with many files"
 }
 
@@ -380,7 +393,8 @@ main() {
     echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
     # Create test environment
-    mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Run error handling tests
     test_nonexistent_directory

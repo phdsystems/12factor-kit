@@ -710,9 +710,9 @@ generate_terminal_report() {
     local filled=$((percentage / 5))
     for ((i=0; i<20; i++)); do
         if [[ $i -lt $filled ]]; then
-            echo -n "█"
+            printf "█"
         else
-            echo -n "░"
+            printf "░"
         fi
     done
     echo "]"
@@ -994,6 +994,20 @@ main() {
     assess_factor_11_logs
     assess_factor_12_admin_processes
     
+    # Handle strict mode exit BEFORE report generation to avoid hanging
+    if [[ "$STRICT_MODE" == "true" ]]; then
+        local percentage=$((TOTAL_SCORE * 100 / MAX_SCORE))
+        echo -e "\n${BOLD}Strict Mode Assessment Complete${NC}"
+        echo -e "${BOLD}Final Score:${NC} ${percentage}% (threshold: 80%)"
+        if [[ $percentage -lt 80 ]]; then
+            echo -e "${RED}❌ FAILED - Below compliance threshold${NC}"
+            exit 1
+        else
+            echo -e "${GREEN}✅ PASSED - Meets compliance threshold${NC}"
+            exit 0
+        fi
+    fi
+
     # Generate report
     case $REPORT_FORMAT in
         json)
@@ -1006,12 +1020,7 @@ main() {
             generate_terminal_report
             ;;
     esac
-    
-    # Exit code based on compliance
-    if [[ "$STRICT_MODE" == "true" ]]; then
-        [[ $((TOTAL_SCORE * 100 / MAX_SCORE)) -lt 80 ]] && exit 1
-    fi
-    
+
     exit 0
 }
 

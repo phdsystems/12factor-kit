@@ -42,6 +42,14 @@ fail_test() {
     ((TESTS_FAILED++))
 }
 
+setup_test_environment() {
+    TEST_TEMP_DIR=$(mktemp -d -t test-XXXXXX)
+
+    # Configure git for tests to prevent hanging
+    git config --global user.email "test@example.com" 2>/dev/null || true
+    git config --global user.name "Test User" 2>/dev/null || true
+}
+
 cleanup_test_environment() {
     rm -rf "$TEST_TEMP_DIR"
 }
@@ -157,13 +165,13 @@ EOF
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial"
+    timeout 5 git commit -q -m "Initial"
     git remote add origin https://github.com/test/repo.git
     git remote add upstream https://github.com/upstream/repo.git
     cd - >/dev/null
 
     # Run with verbose flag
-    local output=$("$TOOL_PATH" "$verbose_project" --verbose 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$verbose_project" --verbose 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -198,7 +206,7 @@ test_depth_parameter_coverage() {
 
     # Test various depth values
     for depth in 1 2 3 4 5 10; do
-        local output=$("$TOOL_PATH" "$depth_project" --depth $depth 2>&1)
+        local output=$(timeout 10 "$TOOL_PATH" "$depth_project" --depth $depth 2>&1)
         if [[ $? -eq 0 ]]; then
             pass_test "Depth $depth processed successfully"
         else
@@ -241,7 +249,7 @@ EOF
     cd - >/dev/null
 
     # Run with remediation flag
-    local output=$("$TOOL_PATH" "$remediate_project" --remediate 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$remediate_project" --remediate 2>&1)
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -316,10 +324,10 @@ EOF
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial"
+    timeout 5 git commit -q -m "Initial"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$python_project" 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$python_project" 2>&1)
     if echo "$output" | grep -q "python"; then
         pass_test "Python project detected correctly"
     else
@@ -345,7 +353,7 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$ruby_project" 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$ruby_project" 2>&1)
     if echo "$output" | grep -q "ruby"; then
         pass_test "Ruby project detected correctly"
     else
@@ -372,7 +380,7 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$go_project" 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$go_project" 2>&1)
     if echo "$output" | grep -q "go"; then
         pass_test "Go project detected correctly"
     else
@@ -390,7 +398,7 @@ test_error_handling_paths() {
     echo '{"name": "readonly"}' > "$readonly_dir/package.json"
     chmod 444 "$readonly_dir"
 
-    local output=$("$TOOL_PATH" "$readonly_dir" 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$readonly_dir" 2>&1)
     chmod 755 "$readonly_dir"  # Restore permissions for cleanup
 
     pass_test "Handled read-only directory"
@@ -414,7 +422,7 @@ test_error_handling_paths() {
     # Create a socket file (simulate)
     touch "$special_dir/socket.sock"
 
-    local output=$("$TOOL_PATH" "$special_dir" 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$special_dir" 2>&1)
     pass_test "Handled special file types"
 }
 
@@ -440,7 +448,7 @@ EOF
     git config user.email "test@example.com"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$json_project" -f json 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$json_project" -f json 2>&1)
 
     # Try to parse the JSON
     if echo "$output" | python3 -m json.tool >/dev/null 2>&1; then
@@ -466,10 +474,10 @@ test_markdown_output_complex() {
     git config user.name "Test"
     git config user.email "test@example.com"
     git add .
-    git commit -q -m "Initial"
+    timeout 5 git commit -q -m "Initial"
     cd - >/dev/null
 
-    local output=$("$TOOL_PATH" "$md_project" -f markdown 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$md_project" -f markdown 2>&1)
 
     if echo "$output" | grep -q "^#"; then
         pass_test "Markdown output has proper headers"
@@ -499,7 +507,7 @@ test_combined_flags_coverage() {
     cd - >/dev/null
 
     # Test all combinations
-    local output=$("$TOOL_PATH" "$combined_project" --verbose --remediate --depth 5 -f json 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" "$combined_project" --verbose --remediate --depth 5 -f json 2>&1)
     if [[ $? -eq 0 ]]; then
         pass_test "All flags combined successfully"
     else
@@ -507,11 +515,11 @@ test_combined_flags_coverage() {
     fi
 
     # Test verbose with strict
-    output=$("$TOOL_PATH" "$combined_project" --verbose --strict 2>&1)
+    output=$(timeout 10 "$TOOL_PATH" "$combined_project" --verbose --strict 2>&1)
     pass_test "Verbose with strict mode"
 
     # Test remediate with markdown
-    output=$("$TOOL_PATH" "$combined_project" --remediate -f markdown 2>&1)
+    output=$(timeout 10 "$TOOL_PATH" "$combined_project" --remediate -f markdown 2>&1)
     pass_test "Remediate with markdown output"
 }
 
@@ -530,11 +538,11 @@ test_environment_variables() {
     cd - >/dev/null
 
     # Test with environment variables set
-    VERBOSE=true REPORT_FORMAT=json CHECK_DEPTH=5 "$TOOL_PATH" "$env_project" >/dev/null 2>&1
+    VERBOSE=true REPORT_FORMAT=json CHECK_DEPTH=5 timeout 10 "$TOOL_PATH" "$env_project" >/dev/null 2>&1
     pass_test "Environment variables processed"
 
     # Test with STRICT_MODE
-    STRICT_MODE=true "$TOOL_PATH" "$env_project" >/dev/null 2>&1
+    STRICT_MODE=true timeout 10 "$TOOL_PATH" "$env_project" >/dev/null 2>&1
     pass_test "STRICT_MODE environment variable"
 }
 
@@ -543,7 +551,7 @@ test_help_function_complete() {
     run_test "Help function complete coverage"
 
     # Test short help flag
-    local output=$("$TOOL_PATH" -h 2>&1)
+    local output=$(timeout 10 "$TOOL_PATH" -h 2>&1)
     if echo "$output" | grep -q "Usage:"; then
         pass_test "Short help flag (-h) works"
     else
@@ -551,7 +559,7 @@ test_help_function_complete() {
     fi
 
     # Test long help flag
-    output=$("$TOOL_PATH" --help 2>&1)
+    output=$(timeout 10 "$TOOL_PATH" --help 2>&1)
     if echo "$output" | grep -q "OPTIONS:"; then
         pass_test "Long help flag (--help) works"
     else
@@ -578,7 +586,8 @@ main() {
     echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
     # Create test environment
-    mkdir -p "$TEST_TEMP_DIR"
+    # Setup test environment with git configuration
+    setup_test_environment
 
     # Run tests
     test_verbose_mode_all_factors
