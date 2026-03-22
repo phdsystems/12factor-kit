@@ -1,0 +1,6 @@
+title: "12-Factor Reviewer"
+description: "Comprehensive language-agnostic 12-Factor App compliance review and assessment tool"
+remote_theme: pages-themes/cayman@v0.2.0
+baseurl: /12-factor-reviewer
+plugins:
+  - jekyll-remote-theme
