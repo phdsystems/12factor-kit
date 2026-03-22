@@ -1,0 +1,57 @@
+site_name: 12-Factor Reviewer
+site_url: https://phdsystems.github.io/12factor-kit/
+site_description: Comprehensive language-agnostic 12-Factor App compliance review and assessment tool
+repo_url: https://github.com/phdsystems/12factor-kit
+repo_name: phdsystems/12factor-kit
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Quick Start: quick_start.md
+  - Design:
+    - Architecture: 3-design/architecture.md
+    - API Reference: 3-design/api.md
+    - Tech Stack: 3-design/tech_stack.md
+  - Development:
+    - Installation: 4-development/installation.md
+    - Usage: 4-development/usage.md
+    - CI/CD Integration: 4-development/ci_cd_integration.md
+    - Contributing: 4-development/contributing.md
+  - Testing: 5-testing/testing.md
+  - FAQ: faq.md

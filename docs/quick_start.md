@@ -156,7 +156,7 @@ export STRICT_MODE=true       # Enable strict by default
 
 ## Links
 
-- 📖 [Full Documentation](../README.md)
+- 📖 [Full Documentation](../index.md)
 - 🐛 [Report Issues](https://github.com/phdsystems/12factor-kit/issues)
 - 💬 [Discussions](https://github.com/phdsystems/12factor-kit/discussions)
 - 📧 [Contact](mailto:phdsystemz@gmail.com)
