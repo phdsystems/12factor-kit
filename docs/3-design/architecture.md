@@ -7,7 +7,7 @@ The 12-Factor Assessment Tool is designed as a modular, extensible system for ev
 ## Directory Structure
 
 ```
-12-factor-reviewer/
+12factor-kit/
 ├── src/                           # Source code
 │   ├── twelve-factor-assessment.sh  # Main assessment engine
 │   └── lib/                      # Shared libraries

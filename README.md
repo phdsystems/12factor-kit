@@ -21,8 +21,8 @@ The 12-Factor Reviewer evaluates your project against the [12-Factor App](https:
 
 ```bash
 # Clone and run
-git clone https://github.com/phdsystems/12-factor-reviewer.git
-cd 12-factor-reviewer
+git clone https://github.com/phdsystems/12factor-kit.git
+cd 12factor-kit
 ./bin/twelve-factor-reviewer /path/to/project
 ```
 
@@ -120,7 +120,7 @@ Check out the [examples](examples/) directory for:
 
 ## 📞 Support
 
-- 🐛 [Report Issues](https://github.com/phdsystems/12-factor-reviewer/issues)
-- 💬 [Discussions](https://github.com/phdsystems/12-factor-reviewer/discussions)
+- 🐛 [Report Issues](https://github.com/phdsystems/12factor-kit/issues)
+- 💬 [Discussions](https://github.com/phdsystems/12factor-kit/discussions)
 - 📧 Contact: phdsystemz@gmail.com
 - 📖 [FAQ](docs/faq.md) - Frequently Asked Questions

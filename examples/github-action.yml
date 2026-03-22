@@ -20,7 +20,7 @@ jobs:
 
       - name: Install 12-Factor Reviewer
         run: |
-          git clone https://github.com/phdsystems/12-factor-reviewer.git /tmp/12factor
+          git clone https://github.com/phdsystems/12factor-kit.git /tmp/12factor
           chmod +x /tmp/12factor/bin/twelve-factor-reviewer
 
       - name: Run 12-Factor Assessment

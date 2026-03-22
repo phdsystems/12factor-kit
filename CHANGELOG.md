@@ -73,4 +73,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-For detailed commit history, see the [Git log](https://github.com/phdsystems/12-factor-reviewer/commits/main).
+For detailed commit history, see the [Git log](https://github.com/phdsystems/12factor-kit/commits/main).

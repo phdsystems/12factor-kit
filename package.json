@@ -1,5 +1,5 @@
 {
-  "name": "12-factor-reviewer",
+  "name": "12factor-kit",
   "version": "1.0.0",
   "description": "Comprehensive language-agnostic 12-Factor App compliance review and assessment tool",
   "main": "bin/twelve-factor-reviewer",
@@ -30,12 +30,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/phdsystems/12-factor-reviewer.git"
+    "url": "https://github.com/phdsystems/12factor-kit.git"
   },
   "bugs": {
-    "url": "https://github.com/phdsystems/12-factor-reviewer/issues"
+    "url": "https://github.com/phdsystems/12factor-kit/issues"
   },
-  "homepage": "https://github.com/phdsystems/12-factor-reviewer",
+  "homepage": "https://github.com/phdsystems/12factor-kit",
   "engines": {
     "node": ">=14.0.0"
   },

@@ -4,8 +4,8 @@
 
 ### Clone and Run
 ```bash
-git clone https://github.com/phdsystems/12-factor-reviewer.git
-cd 12-factor-reviewer
+git clone https://github.com/phdsystems/12factor-kit.git
+cd 12factor-kit
 ./bin/twelve-factor-reviewer /path/to/project
 ```
 
@@ -15,8 +15,8 @@ cd 12-factor-reviewer
 
 ```bash
 # Clone this repository
-git clone https://github.com/phdsystems/12-factor-reviewer.git
-cd 12-factor-reviewer
+git clone https://github.com/phdsystems/12factor-kit.git
+cd 12factor-kit
 
 # Make the tool executable
 chmod +x bin/twelve-factor-reviewer
@@ -33,8 +33,8 @@ twelve-factor-reviewer /path/to/project
 
 ```bash
 # Clone and install
-git clone https://github.com/phdsystems/12-factor-reviewer.git
-cd 12-factor-reviewer
+git clone https://github.com/phdsystems/12factor-kit.git
+cd 12factor-kit
 
 # Install to /usr/local/bin
 sudo ./install.sh
@@ -51,8 +51,8 @@ docker pull phdsystems/12factor-reviewer
 docker run -v $(pwd):/project phdsystems/12factor-reviewer
 
 # Or build locally
-git clone https://github.com/phdsystems/12-factor-reviewer.git
-cd 12-factor-reviewer
+git clone https://github.com/phdsystems/12factor-kit.git
+cd 12factor-kit
 docker build -t 12factor-reviewer .
 docker run -v $(pwd):/project 12factor-reviewer
 ```
@@ -83,13 +83,13 @@ twelve-factor-reviewer .
 
 ### For Git installations
 ```bash
-cd 12-factor-reviewer
+cd 12factor-kit
 git pull origin main
 ```
 
 ### For system-wide installations
 ```bash
-cd 12-factor-reviewer
+cd 12factor-kit
 git pull origin main
 sudo ./install.sh
 ```
@@ -103,7 +103,7 @@ docker pull phdsystems/12factor-reviewer
 
 ### Remove local installation
 ```bash
-rm -rf 12-factor-reviewer
+rm -rf 12factor-kit
 ```
 
 ### Remove system-wide installation
@@ -126,7 +126,7 @@ chmod +x bin/twelve-factor-reviewer
 ### Command Not Found
 Add to PATH:
 ```bash
-export PATH="$PATH:/path/to/12-factor-reviewer/bin"
+export PATH="$PATH:/path/to/12factor-kit/bin"
 ```
 
 ### Docker Volume Issues

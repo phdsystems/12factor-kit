@@ -2,7 +2,7 @@
 
 ## Installation (One-liner)
 ```bash
-git clone https://github.com/phdsystems/12-factor-reviewer.git && cd 12-factor-reviewer && ./bin/twelve-factor-reviewer .
+git clone https://github.com/phdsystems/12factor-kit.git && cd 12factor-kit && ./bin/twelve-factor-reviewer .
 ```
 
 ## Common Commands
@@ -143,7 +143,7 @@ export STRICT_MODE=true       # Enable strict by default
 ## Project Structure
 
 ```
-12-factor-reviewer/
+12factor-kit/
 ├── bin/
 │   └── twelve-factor-reviewer    # Main CLI
 ├── src/
@@ -157,6 +157,6 @@ export STRICT_MODE=true       # Enable strict by default
 ## Links
 
 - 📖 [Full Documentation](../README.md)
-- 🐛 [Report Issues](https://github.com/phdsystems/12-factor-reviewer/issues)
-- 💬 [Discussions](https://github.com/phdsystems/12-factor-reviewer/discussions)
+- 🐛 [Report Issues](https://github.com/phdsystems/12factor-kit/issues)
+- 💬 [Discussions](https://github.com/phdsystems/12factor-kit/discussions)
 - 📧 [Contact](mailto:phdsystemz@gmail.com)

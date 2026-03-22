@@ -40,7 +40,7 @@ Yes! The tool is CI/CD ready with:
 ### How do I update to the latest version?
 For Git installations:
 ```bash
-cd 12-factor-reviewer
+cd 12factor-kit
 git pull origin main
 ```
 
@@ -136,8 +136,8 @@ Currently, the tool automatically excludes common directories like node_modules 
 ## Support & Resources
 
 ### Where can I get help?
-- 🐛 [Report Issues](https://github.com/phdsystems/12-factor-reviewer/issues)
-- 💬 [Discussions](https://github.com/phdsystems/12-factor-reviewer/discussions)
+- 🐛 [Report Issues](https://github.com/phdsystems/12factor-kit/issues)
+- 💬 [Discussions](https://github.com/phdsystems/12factor-kit/discussions)
 - 📧 Contact: phdsystemz@gmail.com
 
 ### Where can I learn more about 12-Factor Apps?

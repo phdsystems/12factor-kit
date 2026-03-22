@@ -60,7 +60,7 @@
 No breaking changes. Simply update:
 
 ```bash
-cd 12-factor-reviewer
+cd 12factor-kit
 git pull origin main
 ```
 
@@ -120,8 +120,8 @@ Special thanks to all contributors who helped improve the 12-Factor Reviewer:
 
 For questions or issues:
 - 📖 Check the [FAQ](docs/FAQ.md)
-- 🐛 [Report Issues](https://github.com/phdsystems/12-factor-reviewer/issues)
-- 💬 [Join Discussions](https://github.com/phdsystems/12-factor-reviewer/discussions)
+- 🐛 [Report Issues](https://github.com/phdsystems/12factor-kit/issues)
+- 💬 [Join Discussions](https://github.com/phdsystems/12factor-kit/discussions)
 - 📧 Email: phdsystemz@gmail.com
 
 ---
