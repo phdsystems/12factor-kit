@@ -6,6 +6,7 @@ A comprehensive, language-agnostic tool for reviewing and assessing 12-Factor Ap
 [![Bash 5.0+](https://img.shields.io/badge/bash-5.0%2B-blue)](https://www.gnu.org/software/bash/)
 [![Tests Passing](https://img.shields.io/badge/tests-9%20suites%20passing-brightgreen)](./tests)
 [![Coverage](https://img.shields.io/badge/coverage-71%25-yellow)](docs/5-testing/testing.md)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://phdsystems.github.io/12factor-kit/)
 
 ## 🎯 Overview
 
