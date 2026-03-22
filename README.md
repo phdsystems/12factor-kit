@@ -5,7 +5,7 @@ A comprehensive, language-agnostic tool for reviewing and assessing 12-Factor Ap
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Bash 5.0+](https://img.shields.io/badge/bash-5.0%2B-blue)](https://www.gnu.org/software/bash/)
 [![Tests Passing](https://img.shields.io/badge/tests-9%20suites%20passing-brightgreen)](./tests)
-[![Coverage](https://img.shields.io/badge/coverage-71%25-yellow)](./coverage)
+[![Coverage](https://img.shields.io/badge/coverage-71%25-yellow)](docs/5-testing/testing.md)
 
 ## 🎯 Overview
 

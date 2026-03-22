@@ -149,9 +149,9 @@ test_new_feature() {
 #### Documentation Locations:
 
 - `README.md` - User-facing documentation
-- `docs/ARCHITECTURE.md` - Technical design
-- `docs/API.md` - Function/API reference
-- `docs/CONTRIBUTING.md` - This file
+- `docs/3-design/architecture.md` - Technical design
+- `docs/3-design/api.md` - Function/API reference
+- `docs/4-development/contributing.md` - This file
 - Inline comments - Code explanations
 
 ### Commit Messages
@@ -218,9 +218,13 @@ tests/
 └── test_12factor_assessment.sh  # Test suite
 
 docs/
-├── ARCHITECTURE.md        # Technical design
-├── CONTRIBUTING.md        # Contribution guide
-└── API.md                # API documentation
+├── 3-design/
+│   ├── architecture.md    # Technical design
+│   └── api.md             # API documentation
+├── 4-development/
+│   └── contributing.md    # Contribution guide
+└── 5-testing/
+    └── testing.md         # Test documentation
 ```
 
 ## Getting Help

@@ -7,14 +7,14 @@ The 12-Factor Assessment Tool is designed as a modular, extensible system for ev
 ## Directory Structure
 
 ```
-12factor-assess/
+12-factor-reviewer/
 ├── src/                           # Source code
 │   ├── twelve-factor-assessment.sh  # Main assessment engine
 │   └── lib/                      # Shared libraries
 │       ├── colors.sh            # Color definitions and output formatting
 │       └── utils.sh             # Utility functions
 ├── bin/                          # Executable wrappers
-│   └── 12factor-assess          # CLI entry point
+│   └── twelve-factor-reviewer   # CLI entry point
 ├── tests/                        # Test suite
 │   ├── test-core-assessment.sh  # Main test suite
 │   ├── test-input-validation.sh # Input validation tests
@@ -22,18 +22,18 @@ The 12-Factor Assessment Tool is designed as a modular, extensible system for ev
 │   ├── test-error-handling.sh   # Error handling tests
 │   ├── test-quick-validation.sh # Quick validation tests
 │   └── run-comprehensive-tests.sh # Complete test runner
-├── docs/                  # Documentation
-│   ├── ARCHITECTURE.md    # This file
-│   ├── CONTRIBUTING.md    # Contribution guidelines
-│   └── API.md            # API documentation
-├── config/               # Configuration files
-├── scripts/                     # Helper scripts
+├── docs/                         # Documentation
+│   ├── README.md                 # Documentation hub
+│   ├── 3-design/                 # Architecture and design
+│   ├── 4-development/            # Developer guides
+│   └── 5-testing/                # Test documentation
+├── config/                       # Configuration files
+├── scripts/                      # Helper scripts
 │   ├── batch-assessment.sh      # Batch processing
 │   ├── coverage-analysis.sh     # Code coverage analysis (bashcov)
 │   ├── coverage-summary.sh      # Coverage report display
 │   └── test-runner.sh           # Test execution
-├── examples/             # Usage examples
-└── lib/                  # External libraries
+└── examples/                     # Usage examples
 
 ```
 
