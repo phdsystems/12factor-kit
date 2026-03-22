@@ -84,7 +84,7 @@ The tool uses file pattern matching and content analysis to detect:
 - Version control metadata
 
 ### Can I contribute to the project?
-Yes! Contributions are welcome. Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+Yes! Contributions are welcome. Please see our [Contributing Guide](4-development/contributing.md) for details on:
 - Code style guidelines
 - Testing requirements
 - Pull request process

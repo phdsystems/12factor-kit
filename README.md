@@ -30,16 +30,16 @@ cd 12-factor-reviewer
 
 | Document | Description |
 |----------|-------------|
-| [Quick Reference](docs/QUICK-REFERENCE.md) | **⚡ Start here** - Commands cheat sheet |
-| [Installation Guide](docs/INSTALLATION.md) | Multiple installation methods |
-| [Usage Guide](docs/USAGE.md) | Commands, options, and examples |
-| [FAQ](docs/FAQ.md) | Frequently asked questions |
-| [CI/CD Integration](docs/CI-CD-INTEGRATION.md) | GitHub Actions, GitLab, Jenkins setup |
-| [Tech Stack](docs/TECH-STACK.md) | Technologies and requirements |
-| [API Reference](docs/API.md) | Detailed API documentation |
-| [Architecture](docs/ARCHITECTURE.md) | System design and internals |
-| [Contributing](docs/CONTRIBUTING.md) | How to contribute |
-| [Testing](docs/TESTING.md) | Test suite and coverage |
+| [Quick Start](docs/quick_start.md) | Commands cheat sheet — start here |
+| [Installation Guide](docs/4-development/installation.md) | Multiple installation methods |
+| [Usage Guide](docs/4-development/usage.md) | Commands, options, and examples |
+| [FAQ](docs/faq.md) | Frequently asked questions |
+| [CI/CD Integration](docs/4-development/ci_cd_integration.md) | GitHub Actions, GitLab, Jenkins setup |
+| [Tech Stack](docs/3-design/tech_stack.md) | Technologies and requirements |
+| [API Reference](docs/3-design/api.md) | Detailed API documentation |
+| [Architecture](docs/3-design/architecture.md) | System design and internals |
+| [Contributing](docs/4-development/contributing.md) | How to contribute |
+| [Testing](docs/5-testing/testing.md) | Test suite and coverage |
 
 ## ✨ Key Features
 
@@ -85,7 +85,7 @@ twelve-factor-reviewer . --strict
 twelve-factor-reviewer . --verbose --remediate
 ```
 
-See [Usage Guide](docs/USAGE.md) for more examples.
+See [Usage Guide](docs/4-development/usage.md) for more examples.
 
 ## 🔧 Requirements
 
@@ -93,11 +93,11 @@ See [Usage Guide](docs/USAGE.md) for more examples.
 - Git 2.0+
 - 50MB disk space
 
-See [Tech Stack](docs/TECH-STACK.md) for details.
+See [Tech Stack](docs/3-design/tech_stack.md) for details.
 
 ## 🤝 Contributing
 
-Contributions welcome! Please see our [Contributing Guide](docs/CONTRIBUTING.md).
+Contributions welcome! Please see our [Contributing Guide](docs/4-development/contributing.md).
 
 ## 📄 License
 
@@ -123,4 +123,4 @@ Check out the [examples](examples/) directory for:
 - 🐛 [Report Issues](https://github.com/phdsystems/12-factor-reviewer/issues)
 - 💬 [Discussions](https://github.com/phdsystems/12-factor-reviewer/discussions)
 - 📧 Contact: phdsystemz@gmail.com
-- 📖 [FAQ](docs/FAQ.md) - Frequently Asked Questions
+- 📖 [FAQ](docs/faq.md) - Frequently Asked Questions
