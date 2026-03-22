@@ -81,14 +81,14 @@ Comprehensive testing including:
 
 ## Data Flow
 
-```
-User Input → CLI Wrapper → Assessment Engine → Factor Evaluators
-                                              ↓
-                                          Scoring System
-                                              ↓
-                                         Report Generator
-                                              ↓
-                                         Output (Terminal/JSON/MD)
+```mermaid
+flowchart TD
+  Input["User Input"] --> CLI["CLI Wrapper"]
+  CLI --> Engine["Assessment Engine"]
+  Engine --> Factors["Factor Evaluators"]
+  Factors --> Scoring["Scoring System"]
+  Scoring --> Report["Report Generator"]
+  Report --> Output["Output (Terminal / JSON / MD)"]
 ```
 
 ## Assessment Process
